@@ -75,10 +75,12 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 
-# Unity project generated files
-/My project/Library/
-/My project/Temp/
-/My project/Obj/
-/My project/Logs/
-/My project/UserSettings/
-/My project/Builds/
+# Unity project generated files (nested Unity project)
+**/[Ll]ibrary/
+**/[Tt]emp/
+**/[Oo]bj/
+**/[Ll]ogs/
+**/[Uu]ser[Ss]ettings/
+**/[Bb]uilds/
+**/[Mm]emoryCaptures/
+**/[Rr]ecordings/
