@@ -56,12 +56,6 @@ public class NetworkPlayerMovement : NetworkBehaviour
         serverMoveInput = Vector2.zero;
         verticalVelocity = 0f;
         lastInputTime = Time.time;
-
-        Debug.Log(
-            $"Player Spawned | IsServer: {IsServer}, " +
-            $"IsOwner: {IsOwner}, " +
-            $"OwnerClientId: {OwnerClientId}"
-        );
     }
 
     private void Update()
@@ -69,44 +63,35 @@ public class NetworkPlayerMovement : NetworkBehaviour
         if (!IsSpawned)
             return;
 
-        // Read input only for the local player's object.
+        // Read input only for the locally controlled player.
         if (IsOwner)
         {
             localMoveInput = moveAction.ReadValue<Vector2>();
-            localMoveInput = Vector2.ClampMagnitude(
-                localMoveInput, 1f);
-
-            if (IsOwner)
-            {
-                localMoveInput = moveAction.ReadValue<Vector2>();
-
-                Debug.Log($"Local Input: {localMoveInput}");
-            }
+            localMoveInput = Vector2.ClampMagnitude(localMoveInput, 1f);
 
             if (IsServer)
             {
-                // Host owns the server, so input is available directly.
+                // Host: process local input directly.
                 serverMoveInput = localMoveInput;
                 lastInputTime = Time.time;
             }
             else
             {
-                // Clients send input; they do not move the controller.
+                // Client: send input to the server.
                 SubmitMovementRpc(localMoveInput);
             }
         }
 
-        // The server moves every player's character once per frame.
+        // Only the server moves player CharacterControllers.
         if (IsServer)
         {
-            // Stop movement if input updates stop arriving.
             if (Time.time - lastInputTime > 0.25f)
                 serverMoveInput = Vector2.zero;
 
             MoveOnServer();
         }
     }
-
+    
     [Rpc(SendTo.Server)]
     private void SubmitMovementRpc(
         Vector2 input,
@@ -118,39 +103,39 @@ public class NetworkPlayerMovement : NetworkBehaviour
 
         serverMoveInput = Vector2.ClampMagnitude(input, 1f);
         lastInputTime = Time.time;
-
-        Debug.Log(
-    $"Server Received Input: {input}, " +
-    $"Sender: {rpcParams.Receive.SenderClientId}"
-);
     }
 
-    private void MoveOnServer()
+private void MoveOnServer()
+{
+    if (!characterController.enabled)
+        return;
+
+    Vector3 before = transform.position;
+
+    Vector3 horizontalMovement = new Vector3(
+        serverMoveInput.x,
+        0f,
+        serverMoveInput.y
+    ) * moveSpeed;
+
+    if (characterController.isGrounded && verticalVelocity < 0f)
+        verticalVelocity = -2f;
+
+    verticalVelocity += gravity * Time.deltaTime;
+
+    Vector3 movement = horizontalMovement;
+    movement.y = verticalVelocity;
+
+    characterController.Move(movement * Time.deltaTime);
+
+    if (serverMoveInput != Vector2.zero)
     {
-        if (!characterController.enabled)
-            return;
-
-        Vector3 horizontalMovement = new Vector3(
-            serverMoveInput.x,
-            0f,
-            serverMoveInput.y
-        ) * moveSpeed;
-
-        if (characterController.isGrounded && verticalVelocity < 0f)
-            verticalVelocity = -2f;
-
-        verticalVelocity += gravity * Time.deltaTime;
-
-        Vector3 movement = horizontalMovement;
-        movement.y = verticalVelocity;
-
-        characterController.Move(movement * Time.deltaTime);
-
         Debug.Log(
-    $"Server Move | Input: {serverMoveInput}, " +
-    $"Controller Enabled: {characterController.enabled}"
-);
+            $"Input: {serverMoveInput}, " +
+            $"Before: {before}, After: {transform.position}"
+        );
     }
+}
 
     public override void OnNetworkDespawn()
     {
