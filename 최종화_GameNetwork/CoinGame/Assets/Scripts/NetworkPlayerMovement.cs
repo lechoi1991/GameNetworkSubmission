@@ -56,6 +56,12 @@ public class NetworkPlayerMovement : NetworkBehaviour
         serverMoveInput = Vector2.zero;
         verticalVelocity = 0f;
         lastInputTime = Time.time;
+
+        Debug.Log(
+            $"Player Spawned | IsServer: {IsServer}, " +
+            $"IsOwner: {IsOwner}, " +
+            $"OwnerClientId: {OwnerClientId}"
+        );
     }
 
     private void Update()
@@ -69,6 +75,13 @@ public class NetworkPlayerMovement : NetworkBehaviour
             localMoveInput = moveAction.ReadValue<Vector2>();
             localMoveInput = Vector2.ClampMagnitude(
                 localMoveInput, 1f);
+
+            if (IsOwner)
+            {
+                localMoveInput = moveAction.ReadValue<Vector2>();
+
+                Debug.Log($"Local Input: {localMoveInput}");
+            }
 
             if (IsServer)
             {
@@ -105,6 +118,11 @@ public class NetworkPlayerMovement : NetworkBehaviour
 
         serverMoveInput = Vector2.ClampMagnitude(input, 1f);
         lastInputTime = Time.time;
+
+        Debug.Log(
+    $"Server Received Input: {input}, " +
+    $"Sender: {rpcParams.Receive.SenderClientId}"
+);
     }
 
     private void MoveOnServer()
@@ -127,6 +145,11 @@ public class NetworkPlayerMovement : NetworkBehaviour
         movement.y = verticalVelocity;
 
         characterController.Move(movement * Time.deltaTime);
+
+        Debug.Log(
+    $"Server Move | Input: {serverMoveInput}, " +
+    $"Controller Enabled: {characterController.enabled}"
+);
     }
 
     public override void OnNetworkDespawn()
@@ -148,5 +171,5 @@ public class NetworkPlayerMovement : NetworkBehaviour
             moveAction.Dispose();
             moveAction = null;
         }
-    }
+    }    
 }
