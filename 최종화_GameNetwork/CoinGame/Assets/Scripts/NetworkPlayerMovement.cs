@@ -10,7 +10,6 @@ public class NetworkPlayerMovement : NetworkBehaviour
     [SerializeField] private float gravity = -20f;
 
     private CharacterController characterController;
-    private InputAction moveAction;
 
     // Input currently held by this player.
     private Vector2 localMoveInput;
@@ -26,50 +25,10 @@ public class NetworkPlayerMovement : NetworkBehaviour
         characterController = GetComponent<CharacterController>();
     }
 
-    // Create the action when the owner spawns, not in Awake, so it is
-    // bound to the Input System state of the current Play session.
-    private void CreateMoveAction()
-    {
-        DisposeMoveAction();
-
-        moveAction = new InputAction(
-            name: "Move",
-            type: InputActionType.Value,
-            binding: "<Gamepad>/leftStick"
-        );
-
-        moveAction.AddCompositeBinding("2DVector")
-            .With("Up", "<Keyboard>/w")
-            .With("Down", "<Keyboard>/s")
-            .With("Left", "<Keyboard>/a")
-            .With("Right", "<Keyboard>/d");
-
-        moveAction.AddCompositeBinding("2DVector")
-            .With("Up", "<Keyboard>/upArrow")
-            .With("Down", "<Keyboard>/downArrow")
-            .With("Left", "<Keyboard>/leftArrow")
-            .With("Right", "<Keyboard>/rightArrow");
-
-        moveAction.Enable();
-    }
-
-    private void DisposeMoveAction()
-    {
-        if (moveAction == null)
-            return;
-
-        moveAction.Disable();
-        moveAction.Dispose();
-        moveAction = null;
-    }
-
     public override void OnNetworkSpawn()
     {
         // Only the server moves CharacterControllers.
         characterController.enabled = IsServer;
-
-        if (IsOwner)
-            CreateMoveAction();
 
         localMoveInput = Vector2.zero;
         serverMoveInput = Vector2.zero;
@@ -83,10 +42,9 @@ public class NetworkPlayerMovement : NetworkBehaviour
             return;
 
         // Read input only for the locally controlled player.
-        if (IsOwner && moveAction != null)
+        if (IsOwner)
         {
-            localMoveInput = moveAction.ReadValue<Vector2>();
-            localMoveInput = Vector2.ClampMagnitude(localMoveInput, 1f);
+            localMoveInput = ReadMoveInput();
 
             if (IsServer)
             {
@@ -110,7 +68,38 @@ public class NetworkPlayerMovement : NetworkBehaviour
             MoveOnServer();
         }
     }
-    
+
+    // Read the devices directly instead of an InputAction.
+    // An InputAction did not receive input on the first Play after
+    // opening the Editor, while Keyboard.current did.
+    private static Vector2 ReadMoveInput()
+    {
+        Vector2 input = Vector2.zero;
+        Keyboard keyboard = Keyboard.current;
+
+        if (keyboard != null)
+        {
+            if (keyboard.wKey.isPressed || keyboard.upArrowKey.isPressed)
+                input.y += 1f;
+
+            if (keyboard.sKey.isPressed || keyboard.downArrowKey.isPressed)
+                input.y -= 1f;
+
+            if (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed)
+                input.x += 1f;
+
+            if (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed)
+                input.x -= 1f;
+        }
+
+        Gamepad gamepad = Gamepad.current;
+
+        if (gamepad != null)
+            input += gamepad.leftStick.ReadValue();
+
+        return Vector2.ClampMagnitude(input, 1f);
+    }
+
     [Rpc(SendTo.Server)]
     private void SubmitMovementRpc(
         Vector2 input,
@@ -158,16 +147,8 @@ private void MoveOnServer()
 
     public override void OnNetworkDespawn()
     {
-        DisposeMoveAction();
-
         localMoveInput = Vector2.zero;
         serverMoveInput = Vector2.zero;
         verticalVelocity = 0f;
-    }
-
-    public override void OnDestroy()
-    {
-        base.OnDestroy();
-        DisposeMoveAction();
     }
 }

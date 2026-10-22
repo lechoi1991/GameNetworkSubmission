@@ -8,6 +8,11 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(NetworkScorePlayer))]
 public class NetworkCoinCollector : NetworkBehaviour
 {
+    [Header("Touch Pickup")]
+    // Horizontal distance at which touching a coin sends a request.
+    // Kept below the server's pickup range to allow for latency.
+    [SerializeField, Min(0.1f)] private float touchRange = 1f;
+
     [Header("Test Input")]
     // F1-F4 send requests that the server must reject.
     [SerializeField] private bool enableTestInput = true;
@@ -18,6 +23,11 @@ public class NetworkCoinCollector : NetworkBehaviour
 
     private NetworkScorePlayer scorePlayer;
     private int lastRequestedCoinId = -1;
+
+    // Coins already requested by touch, so each is requested only once.
+    // Coin IDs are not reused in a session.
+    private readonly HashSet<int> touchRequestedIds = new();
+    private readonly List<int> touchedCoinIds = new();
 
     // Recent results for the local player, shown by NetworkScoreUI.
     private static readonly Queue<string> localResults = new();
@@ -33,13 +43,18 @@ public class NetworkCoinCollector : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         if (IsOwner)
+        {
             localResults.Clear();
+            touchRequestedIds.Clear();
+        }
     }
 
     private void Update()
     {
         if (!IsSpawned || !IsOwner)
             return;
+
+        RequestTouchedCoins();
 
         Keyboard keyboard = Keyboard.current;
 
@@ -72,6 +87,35 @@ public class NetworkCoinCollector : NetworkBehaviour
         // F4: the last requested coin again.
         if (keyboard.f4Key.wasPressedThisFrame)
             RequestCoin(lastRequestedCoinId);
+    }
+
+    // Touching a coin sends the same request as E.
+    private void RequestTouchedCoins()
+    {
+        float rangeSqr = touchRange * touchRange;
+        touchedCoinIds.Clear();
+
+        foreach (NetworkCoin coin in NetworkCoin.SpawnedCoins)
+        {
+            int coinId = coin.CoinId.Value;
+
+            if (coinId < 0 || touchRequestedIds.Contains(coinId))
+                continue;
+
+            Vector3 offset = coin.transform.position - transform.position;
+            offset.y = 0f;
+
+            if (offset.sqrMagnitude <= rangeSqr)
+                touchedCoinIds.Add(coinId);
+        }
+
+        // Request after the loop: on the Host the RPC runs immediately
+        // and may despawn a coin, which changes SpawnedCoins.
+        foreach (int coinId in touchedCoinIds)
+        {
+            touchRequestedIds.Add(coinId);
+            RequestCoin(coinId);
+        }
     }
 
     private int FindCoinId(bool nearest)
