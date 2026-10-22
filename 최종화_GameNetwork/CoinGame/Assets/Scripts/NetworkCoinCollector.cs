@@ -81,6 +81,10 @@ public class NetworkCoinCollector : NetworkBehaviour
 
         foreach (NetworkCoin coin in NetworkCoin.SpawnedCoins)
         {
+            // Skip a coin whose ID has not arrived yet.
+            if (coin.CoinId.Value < 0)
+                continue;
+
             Vector3 offset = coin.transform.position - transform.position;
             offset.y = 0f;
             float distance = offset.sqrMagnitude;

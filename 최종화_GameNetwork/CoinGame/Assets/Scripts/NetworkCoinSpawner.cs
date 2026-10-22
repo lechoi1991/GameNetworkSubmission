@@ -199,8 +199,8 @@ public class NetworkCoinSpawner : MonoBehaviour
         NetworkCoin networkCoin = coin.GetComponent<NetworkCoin>();
         int coinId = nextCoinId++;
 
-        // Set the ID before spawning so clients receive it with the coin.
-        networkCoin.CoinId.Value = coinId;
+        // The coin writes this ID to its NetworkVariable when it spawns.
+        networkCoin.AssignIdBeforeSpawn(coinId);
         coin.Spawn();
 
         activeCoins[coinId] = networkCoin;
