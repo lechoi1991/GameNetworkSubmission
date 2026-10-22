@@ -84,3 +84,9 @@ crashlytics-build.properties
 **/[Bb]uilds/
 **/[Mm]emoryCaptures/
 **/[Rr]ecordings/
+# Console project (UdpPeer) build output
+**/[Bb]in/
+**/[Oo]bj/
+
+# Keep the UdpPeer console project file (overrides *.csproj above)
+!최종화_GameNetwork/UdpPeer/UdpPeer.csproj

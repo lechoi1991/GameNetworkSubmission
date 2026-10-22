@@ -19,7 +19,7 @@
 
 ### Unity 프로젝트
 
-- Unity 프로젝트 경로: `GameNetworPortfolio\최종화_GameNetwork\CoinGame`
+- Unity 프로젝트 경로: `최종화_GameNetwork/CoinGame`
 - 시작 씬: `Assets/Scenes/CoinGame`
 - 주요 스크립트: `Assets/Scripts/`
 - 플레이어 프리팹: `Assets/Prefabs/Player.prefab`
@@ -27,9 +27,9 @@
 
 ### 콘솔 프로젝트
 
-- 콘솔 프로젝트 경로: `GameNetworPortfolio\최종화_GameNetwork\UdpPeer`
-- 프로젝트 파일: `실제 .csproj 파일명 입력`
-- 실행 방법: 해당 프로젝트의 실행 설정에 따라 `dotnet run` 또는 빌드된 실행 파일 사용
+- 콘솔 프로젝트 경로: `최종화_GameNetwork/UdpPeer`
+- 프로젝트 파일: `UdpPeer/UdpPeer.csproj` (net10.0)
+- 실행 방법: `UdpPeer` 폴더에서 `dotnet run` (빌드 산출물 `bin`·`obj`는 제출에서 제외)
 
 ※ 현재 과제에서 별도의 UDP 콘솔 피어를 사용하는 경우, Unity Host/Client와 콘솔 피어가 동일한 프로토콜 및 메시지 형식을 사용하는지 확인한다. 콘솔 피어가 없다면 이 항목은 삭제한다.
 
