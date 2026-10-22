@@ -24,6 +24,13 @@ public class NetworkPlayerMovement : NetworkBehaviour
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
+    }
+
+    // Create the action when the owner spawns, not in Awake, so it is
+    // bound to the Input System state of the current Play session.
+    private void CreateMoveAction()
+    {
+        DisposeMoveAction();
 
         moveAction = new InputAction(
             name: "Move",
@@ -42,6 +49,18 @@ public class NetworkPlayerMovement : NetworkBehaviour
             .With("Down", "<Keyboard>/downArrow")
             .With("Left", "<Keyboard>/leftArrow")
             .With("Right", "<Keyboard>/rightArrow");
+
+        moveAction.Enable();
+    }
+
+    private void DisposeMoveAction()
+    {
+        if (moveAction == null)
+            return;
+
+        moveAction.Disable();
+        moveAction.Dispose();
+        moveAction = null;
     }
 
     public override void OnNetworkSpawn()
@@ -50,7 +69,7 @@ public class NetworkPlayerMovement : NetworkBehaviour
         characterController.enabled = IsServer;
 
         if (IsOwner)
-            moveAction.Enable();
+            CreateMoveAction();
 
         localMoveInput = Vector2.zero;
         serverMoveInput = Vector2.zero;
@@ -64,7 +83,7 @@ public class NetworkPlayerMovement : NetworkBehaviour
             return;
 
         // Read input only for the locally controlled player.
-        if (IsOwner)
+        if (IsOwner && moveAction != null)
         {
             localMoveInput = moveAction.ReadValue<Vector2>();
             localMoveInput = Vector2.ClampMagnitude(localMoveInput, 1f);
@@ -139,8 +158,7 @@ private void MoveOnServer()
 
     public override void OnNetworkDespawn()
     {
-        if (moveAction != null)
-            moveAction.Disable();
+        DisposeMoveAction();
 
         localMoveInput = Vector2.zero;
         serverMoveInput = Vector2.zero;
@@ -150,11 +168,6 @@ private void MoveOnServer()
     public override void OnDestroy()
     {
         base.OnDestroy();
-
-        if (moveAction != null)
-        {
-            moveAction.Dispose();
-            moveAction = null;
-        }
-    }    
+        DisposeMoveAction();
+    }
 }
