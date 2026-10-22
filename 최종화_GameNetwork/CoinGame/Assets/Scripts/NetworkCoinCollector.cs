@@ -61,10 +61,6 @@ public class NetworkCoinCollector : NetworkBehaviour
         if (keyboard == null)
             return;
 
-        // E: request the nearest coin.
-        if (keyboard.eKey.wasPressedThisFrame)
-            RequestCoin(FindCoinId(nearest: true));
-
         if (!enableTestInput)
             return;
 
@@ -89,7 +85,7 @@ public class NetworkCoinCollector : NetworkBehaviour
             RequestCoin(lastRequestedCoinId);
     }
 
-    // Touching a coin sends the same request as E.
+    // Touching a coin sends a pickup request for it.
     private void RequestTouchedCoins()
     {
         float rangeSqr = touchRange * touchRange;

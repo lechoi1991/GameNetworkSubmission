@@ -104,7 +104,7 @@ Host와 Client를 각각 실행하여 연결, 이동, 코인 획득 및 점수 �
 
 | 역할 | 담당 | 내용 |
 |---|---|---|
-| 입력 | `NetworkCoinCollector.Update` (소유자만) | 접촉: 수평 거리 1.0 이내 코인을 코인당 한 번 자동 요청, `E`: 가장 가까운 코인, `F1`~`F4`: 시험용 요청 |
+| 입력 | `NetworkCoinCollector.Update` (소유자만) | 접촉: 수평 거리 1.0 이내 코인을 코인당 한 번 자동 요청, `F1`~`F4`: 시험용 요청 |
 | 통신 요청 | `RequestCollectCoinRpc(coinId)` (`SendTo.Server`) | 코인 ID만 보낸다. 점수나 코인 제거는 보내지 않는다. |
 | 서버 판정 | `NetworkCoinSpawner.TryCollectCoin` | 아래 규칙으로 결과 결정 |
 | 상태 반영 | 서버 | `Score` NetworkVariable 증가, 코인 Despawn, 3초 뒤 새 코인 생성 |
