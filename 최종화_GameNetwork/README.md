@@ -167,6 +167,7 @@ Host와 Client가 같은 코인 옆에서 거의 동시에 `E`를 눌러도 서�
 - `127.0.0.1`은 같은 컴퓨터 내부에서만 사용하는 주소다.
 - 다른 컴퓨터에서 접속할 때는 Host 컴퓨터의 LAN IP 주소를 사용해야 한다.
 - Unity Editor와 빌드 실행 파일은 성능 및 입력 처리 환경이 다를 수 있으므로 양쪽에서 테스트한다.
+- 에디터를 새로 열고 처음 플레이할 때 키보드 입력이 게임에 전달되지 않는 경우가 있었다. 이를 막기 위해 `Assets/Settings/InputSystemSettings.asset`에서 Play Mode Input Behavior를 `All Device Input Always Goes To Game View`로 설정했다. 이 설정에서는 에디터의 다른 창을 사용하는 중에도 키 입력이 게임에 전달된다. 설정 위치: Edit → Project Settings → Input System Package.
 
 ## 8. 구현 범위
 
