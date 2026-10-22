@@ -10,8 +10,20 @@ public class InputDiagnosticsOverlay : NetworkBehaviour
     [Header("Diagnostics")]
     [SerializeField] private bool showDiagnostics = true;
 
+    // Events that reached InputSystem.onEvent in the last second, by device.
     private int keyboardEventsThisSecond;
+    private int mouseEventsThisSecond;
+    private int otherEventsThisSecond;
     private int keyboardEventsLastSecond;
+    private int mouseEventsLastSecond;
+    private int otherEventsLastSecond;
+
+    // Totals from InputSystem.metrics, which count events before device lookup.
+    private int metricEventsAtSecondStart;
+    private int metricEventsLastSecond;
+    private uint updatesAtSecondStart;
+    private uint updatesLastSecond;
+
     private float secondTimer;
     private bool subscribed;
 
@@ -22,6 +34,8 @@ public class InputDiagnosticsOverlay : NetworkBehaviour
 
         InputSystem.onEvent += OnInputEvent;
         subscribed = true;
+        metricEventsAtSecondStart = InputSystem.metrics.totalEventCount;
+        updatesAtSecondStart = InputState.updateCount;
     }
 
     public override void OnNetworkDespawn()
@@ -44,11 +58,15 @@ public class InputDiagnosticsOverlay : NetworkBehaviour
         subscribed = false;
     }
 
-    // Counts keyboard events that passed the Input System's focus checks.
+    // Counts events that passed the Input System's focus and routing checks.
     private void OnInputEvent(InputEventPtr eventPtr, InputDevice device)
     {
         if (device is Keyboard)
             keyboardEventsThisSecond++;
+        else if (device is Mouse)
+            mouseEventsThisSecond++;
+        else
+            otherEventsThisSecond++;
     }
 
     private void Update()
@@ -59,8 +77,21 @@ public class InputDiagnosticsOverlay : NetworkBehaviour
             return;
 
         secondTimer = 0f;
+
         keyboardEventsLastSecond = keyboardEventsThisSecond;
+        mouseEventsLastSecond = mouseEventsThisSecond;
+        otherEventsLastSecond = otherEventsThisSecond;
         keyboardEventsThisSecond = 0;
+        mouseEventsThisSecond = 0;
+        otherEventsThisSecond = 0;
+
+        int metricEvents = InputSystem.metrics.totalEventCount;
+        metricEventsLastSecond = metricEvents - metricEventsAtSecondStart;
+        metricEventsAtSecondStart = metricEvents;
+
+        uint updates = InputState.updateCount;
+        updatesLastSecond = updates - updatesAtSecondStart;
+        updatesAtSecondStart = updates;
     }
 
     private void OnGUI()
@@ -76,21 +107,29 @@ public class InputDiagnosticsOverlay : NetworkBehaviour
             : keyboard.enabled ? "enabled" : "DISABLED";
 
         string text =
-            "[Input diagnostics]\n" +
+            $"[Input diagnostics] Unity {Application.unityVersion}\n" +
             $"settings={(settings != null ? settings.name : "null")}, " +
-            $"background={settings?.backgroundBehavior}\n" +
+            $"background={settings?.backgroundBehavior}, " +
+            $"updateMode={settings?.updateMode}\n" +
 #if UNITY_EDITOR
             $"editorPlayMode={settings?.editorInputBehaviorInPlayMode}\n" +
 #endif
             $"app.isFocused={Application.isFocused}, " +
             $"runInBackground={Application.runInBackground}\n" +
-            $"keyboard={keyboardState}, " +
-            $"W={keyboard?.wKey.isPressed}, anyKey={keyboard?.anyKey.isPressed}\n" +
-            $"keyboard events/s={keyboardEventsLastSecond}\n" +
+            $"keyboard={keyboardState}, id={keyboard?.deviceId}, " +
+            $"W={keyboard?.wKey.isPressed}, anyKey={keyboard?.anyKey.isPressed}, " +
+            $"imeSelected={keyboard?.imeSelected.isPressed}\n" +
+            $"onEvent/s: keyboard={keyboardEventsLastSecond}, " +
+            $"mouse={mouseEventsLastSecond}, other={otherEventsLastSecond}\n" +
+            $"metrics events/s={metricEventsLastSecond}, " +
+            $"updates/s={updatesLastSecond}, " +
+            $"lastUpdateType={InputState.currentUpdateType}\n" +
+            $"keyboard.lastUpdateTime={keyboard?.lastUpdateTime:F2}, " +
+            $"now={InputState.currentTime:F2}\n" +
             $"player: owner={IsOwner}, server={IsServer}, " +
             $"clientId={OwnerClientId}";
 
-        Rect rect = new Rect(10f, 10f, 520f, 120f);
+        Rect rect = new Rect(10f, 10f, 560f, 150f);
         GUI.Box(rect, GUIContent.none);
         GUI.Label(new Rect(rect.x + 6f, rect.y + 4f, rect.width - 12f, rect.height - 8f), text);
     }

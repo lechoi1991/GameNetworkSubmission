@@ -30,6 +30,11 @@ public class NetworkPlayerMovement : NetworkBehaviour
         // Only the server moves CharacterControllers.
         characterController.enabled = IsServer;
 
+        // Movement keys are read as raw key state, so IME composition
+        // (e.g. Korean input mode) must not capture them.
+        if (IsOwner)
+            Keyboard.current?.SetIMEEnabled(false);
+
         localMoveInput = Vector2.zero;
         serverMoveInput = Vector2.zero;
         verticalVelocity = 0f;

@@ -169,7 +169,9 @@ Host와 Client가 같은 코인에 거의 동시에 닿아도 서버는 요청�
   - `Assets/Settings/InputSystemSettings.asset` (Edit → Project Settings → Input System Package): Play Mode Input Behavior = `All Device Input Always Goes To Game View`, Background Behavior = `Ignore Focus`
   - Player Settings → Resolution and Presentation: Run In Background 켬. 같은 컴퓨터에서 Host와 Client 창을 함께 띄울 때 포커스를 잃은 창이 멈추지 않도록 하는 데에도 필요하다.
   - 이 설정에서는 플레이 중 에디터의 다른 창에 입력해도 게임에 키 입력이 들어간다.
-- 플레이어 생성 후 화면 왼쪽 위에 `[Input diagnostics]` 상자가 표시된다. Input System 설정, 포커스 상태, 키보드 장치 상태, 초당 키보드 이벤트 수를 보여 주며, 키 입력이 동작하지 않을 때 원인을 확인하는 용도다. Player 프리팹의 `InputDiagnosticsOverlay`에서 `Show Diagnostics`를 끄면 숨겨진다.
+- 플레이어 생성 후 화면 왼쪽 위에 `[Input diagnostics]` 상자가 표시된다. Input System 설정, 포커스 상태, 키보드 장치 상태와 IME 상태, 초당 키보드·마우스 이벤트 수, 업데이트 횟수를 보여 주며, 키 입력이 동작하지 않을 때 원인을 확인하는 용도다. Player 프리팹의 `InputDiagnosticsOverlay`에서 `Show Diagnostics`를 끄면 숨겨진다.
+- 이동 키는 키 상태를 직접 읽으므로, 소유자 플레이어가 생성될 때 `Keyboard.SetIMEEnabled(false)`로 IME 조합 입력을 끈다. 한글 입력 모드에서 키 입력이 조합 입력으로 가로채이는 것을 막기 위한 조치다.
+- 키 입력이 전혀 반응하지 않으면 Window → Analysis → Input Debugger의 옵션 메뉴에서 Enable Event Diagnostics를 켜고 키를 눌러 본다. Console에 `Cannot find device for input event` 오류가 나오면 키보드 이벤트가 장치와 연결되지 않는 상태다.
 
 ## 8. 구현 범위
 
