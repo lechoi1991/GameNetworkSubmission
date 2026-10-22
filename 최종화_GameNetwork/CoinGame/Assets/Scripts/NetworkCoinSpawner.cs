@@ -1,6 +1,16 @@
 using System.Collections;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+
+// Result of a coin pickup request decided by the server.
+public enum CoinCollectResult
+{
+    Accepted,
+    InvalidCoinId,
+    AlreadyCollected,
+    TooFar
+}
 
 public class NetworkCoinSpawner : MonoBehaviour
 {
@@ -20,8 +30,16 @@ public class NetworkCoinSpawner : MonoBehaviour
     [SerializeField, Min(0f)] private float minPlayerDistance = 2f;
     [SerializeField, Min(1)] private int maxSpawnAttempts = 30;
 
+    [Header("Pickup Rules")]
+    [SerializeField, Min(0.1f)] private float pickupRange = 1.5f;
+
     private NetworkManager networkManager;
     private bool sessionInitialized;
+
+    // Server-side coin state for validating pickup requests.
+    private readonly Dictionary<int, NetworkCoin> activeCoins = new();
+    private readonly HashSet<int> collectedCoinIds = new();
+    private int nextCoinId = 1;
 
     private void Awake()
     {
@@ -47,6 +65,7 @@ public class NetworkCoinSpawner : MonoBehaviour
             {
                 StopAllCoroutines();
                 sessionInitialized = false;
+                ResetCoinState();
             }
 
             return;
@@ -56,6 +75,7 @@ public class NetworkCoinSpawner : MonoBehaviour
             return;
 
         sessionInitialized = true;
+        ResetCoinState();
 
         if (coinPrefab == null)
         {
@@ -88,6 +108,46 @@ public class NetworkCoinSpawner : MonoBehaviour
             if (!sessionInitialized)
                 yield break;
         }
+    }
+
+    // Server only: validate a pickup request and apply it if allowed.
+    public CoinCollectResult TryCollectCoin(
+        int coinId,
+        NetworkScorePlayer player)
+    {
+        if (!activeCoins.TryGetValue(coinId, out NetworkCoin coin) ||
+            coin == null ||
+            !coin.IsSpawned)
+        {
+            return collectedCoinIds.Contains(coinId)
+                ? CoinCollectResult.AlreadyCollected
+                : CoinCollectResult.InvalidCoinId;
+        }
+
+        // Check horizontal distance with the server's player position.
+        Vector3 offset =
+            coin.transform.position - player.transform.position;
+        offset.y = 0f;
+
+        if (offset.sqrMagnitude > pickupRange * pickupRange)
+            return CoinCollectResult.TooFar;
+
+        // Mark the coin first so a later request for it is rejected.
+        activeCoins.Remove(coinId);
+        collectedCoinIds.Add(coinId);
+
+        player.AddScoreFromCoin();
+        coin.DespawnOnServer();
+        NotifyCoinCollected();
+
+        return CoinCollectResult.Accepted;
+    }
+
+    private void ResetCoinState()
+    {
+        activeCoins.Clear();
+        collectedCoinIds.Clear();
+        nextCoinId = 1;
     }
 
     public void NotifyCoinCollected()
@@ -136,7 +196,14 @@ public class NetworkCoinSpawner : MonoBehaviour
             Quaternion.identity
         );
 
+        NetworkCoin networkCoin = coin.GetComponent<NetworkCoin>();
+        int coinId = nextCoinId++;
+
+        // Set the ID before spawning so clients receive it with the coin.
+        networkCoin.CoinId.Value = coinId;
         coin.Spawn();
+
+        activeCoins[coinId] = networkCoin;
         return true;
     }
 

@@ -56,6 +56,17 @@ public class NetworkScoreUI : MonoBehaviour
             );
         }
 
+        builder.AppendLine($"Coins left: {NetworkCoin.SpawnedCoins.Count}");
+
+        string results = NetworkCoinCollector.LocalResultText;
+
+        if (results.Length > 0)
+        {
+            builder.AppendLine();
+            builder.AppendLine("My requests");
+            builder.AppendLine(results);
+        }
+
         scoreText.text = builder.ToString();
     }
 }

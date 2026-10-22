@@ -1,41 +1,37 @@
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
 [RequireComponent(typeof(NetworkObject))]
 public class NetworkCoin : NetworkBehaviour
 {
-    private bool isCollected;
+    // Coins currently spawned on this peer.
+    // The local player uses this list to choose a coin to request.
+    public static readonly List<NetworkCoin> SpawnedCoins = new();
 
-    private void OnTriggerEnter(Collider other)
+    // Session-unique ID assigned by the server before spawning.
+    // Unlike NetworkObjectId, it is never reused in a session.
+    public NetworkVariable<int> CoinId = new NetworkVariable<int>(
+        -1,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server
+    );
+
+    public override void OnNetworkSpawn()
     {
-        if (!IsServer || !IsSpawned || isCollected)
+        SpawnedCoins.Add(this);
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        SpawnedCoins.Remove(this);
+    }
+
+    // Called by NetworkCoinSpawner after a request is accepted.
+    public void DespawnOnServer()
+    {
+        if (!IsServer || !IsSpawned)
             return;
-
-        NetworkObject playerObject =
-            other.GetComponentInParent<NetworkObject>();
-
-        if (playerObject == null || !playerObject.IsPlayerObject)
-            return;
-
-        NetworkScorePlayer scorePlayer =
-            playerObject.GetComponent<NetworkScorePlayer>();
-
-        if (scorePlayer == null)
-        {
-            Debug.LogWarning(
-                "Player prefab is missing NetworkScorePlayer.");
-            return;
-        }
-
-        // Prevent multiple pickups of the same coin.
-        isCollected = true;
-
-        // Award the point on the server.
-        scorePlayer.AddScoreFromCoin();
-
-        // Schedule a replacement, then remove this network coin.
-        if (NetworkCoinSpawner.Instance != null)
-            NetworkCoinSpawner.Instance.NotifyCoinCollected();
 
         NetworkObject.Despawn();
     }

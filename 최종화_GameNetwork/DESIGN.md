@@ -100,17 +100,28 @@ Host와 Client를 각각 실행하여 연결, 이동, 코인 획득 및 점수 �
 
 ### 코인 획득
 
-코인 획득 요청이 발생하면 서버는 다음 항목을 검증해야 한다.
+코인 획득은 클라이언트의 요청과 서버의 판정으로 나뉜다. 코인에 닿는 것만으로는 획득되지 않는다.
 
-1. 요청한 플레이어가 유효한 플레이어인지 확인한다.
-2. 요청한 코인 ID가 실제로 존재하는지 확인한다.
-3. 해당 코인이 아직 획득 가능한 상태인지 확인한다.
-4. 플레이어와 코인 사이의 거리가 허용 범위 이내인지 확인한다.
-5. 코인이 이미 다른 요청에 의해 획득 처리되지 않았는지 확인한다.
+| 역할 | 담당 | 내용 |
+|---|---|---|
+| 입력 | `NetworkCoinCollector.Update` (소유자만) | `E`: 가장 가까운 코인, `F1`~`F4`: 시험용 요청 |
+| 통신 요청 | `RequestCollectCoinRpc(coinId)` (`SendTo.Server`) | 코인 ID만 보낸다. 점수나 코인 제거는 보내지 않는다. |
+| 서버 판정 | `NetworkCoinSpawner.TryCollectCoin` | 아래 규칙으로 결과 결정 |
+| 상태 반영 | 서버 | `Score` NetworkVariable 증가, 코인 Despawn, 3초 뒤 새 코인 생성 |
+| 결과 전달 | `CollectResultRpc(coinId, result)` (`SendTo.Owner`) | 요청한 플레이어에게만 결과 전달 |
+| 화면 표시 | `NetworkScoreUI` | 점수, 남은 코인 수, 내 요청 결과 최근 5건 |
 
-검증에 성공하면 서버가 플레이어의 점수를 증가시키고 코인을 획득 불가능한 상태로 변경한 뒤 코인 오브젝트를 제거한다.
+코인 식별값은 서버가 생성 순서대로 붙이는 정수 `CoinId`(1부터 증가)다. `NetworkObjectId`는 NGO가 재사용할 수 있기 때문에, 획득된 코인과 새 코인이 같은 값을 받지 않도록 별도 ID를 둔다. 서버는 세션 동안 `activeCoins`(ID → 코인)와 `collectedCoinIds`(획득된 ID 집합)를 보관한다.
 
-동일한 코인에 대한 중복 요청이 발생하더라도 점수가 여러 번 증가하지 않도록 해야 한다.
+서버 검사 규칙 (위에서부터 순서대로):
+
+1. RPC를 보낸 클라이언트가 해당 플레이어의 소유자가 아니면 처리하지 않는다.
+2. `activeCoins`에 없는 ID이고 `collectedCoinIds`에 있으면 `AlreadyCollected`로 거절한다.
+3. `activeCoins`에도 `collectedCoinIds`에도 없으면 `InvalidCoinId`로 거절한다.
+4. 서버의 플레이어 위치와 코인 사이 수평 거리가 `pickupRange`(1.5)를 넘으면 `TooFar`로 거절한다.
+5. 통과하면 ID를 `activeCoins`에서 빼서 `collectedCoinIds`에 넣는다. 그다음 점수를 올리고 코인을 제거한 뒤 `Accepted`를 돌려준다.
+
+NGO는 서버에서 RPC를 하나씩 순서대로 처리한다. 5단계에서 첫 요청이 ID를 바로 옮기므로, 같은 코인에 대한 두 번째 요청(같은 플레이어의 중복 요청이든 다른 플레이어의 동시 요청이든)은 2단계에서 `AlreadyCollected`가 된다. 따라서 보상은 한 번만 지급된다.
 
 ## 2.6 점수 및 상태 동기화
 
