@@ -165,7 +165,11 @@ Host와 Client가 같은 코인에 거의 동시에 닿아도 서버는 요청�
 - `127.0.0.1`은 같은 컴퓨터 내부에서만 사용하는 주소다.
 - 다른 컴퓨터에서 접속할 때는 Host 컴퓨터의 LAN IP 주소를 사용해야 한다.
 - Unity Editor와 빌드 실행 파일은 성능 및 입력 처리 환경이 다를 수 있으므로 양쪽에서 테스트한다.
-- 에디터를 새로 열고 처음 플레이할 때 키보드 입력이 게임에 전달되지 않는 경우가 있었다. 이를 막기 위해 `Assets/Settings/InputSystemSettings.asset`에서 Play Mode Input Behavior를 `All Device Input Always Goes To Game View`로 설정했다. 이 설정에서는 에디터의 다른 창을 사용하는 중에도 키 입력이 게임에 전달된다. 설정 위치: Edit → Project Settings → Input System Package.
+- 에디터를 새로 열고 처음 플레이할 때 키보드 입력이 게임에 전달되지 않는 경우가 여러 번 있었다. Input System 패키지는 에디터가 포커스를 잃었다고 판단하면 입력을 에디터 쪽으로 돌리거나 버리므로, 포커스와 관계없이 게임이 입력을 받도록 다음과 같이 설정했다 (`TEST_REPORT.md` 1장 참고).
+  - `Assets/Settings/InputSystemSettings.asset` (Edit → Project Settings → Input System Package): Play Mode Input Behavior = `All Device Input Always Goes To Game View`, Background Behavior = `Ignore Focus`
+  - Player Settings → Resolution and Presentation: Run In Background 켬. 같은 컴퓨터에서 Host와 Client 창을 함께 띄울 때 포커스를 잃은 창이 멈추지 않도록 하는 데에도 필요하다.
+  - 이 설정에서는 플레이 중 에디터의 다른 창에 입력해도 게임에 키 입력이 들어간다.
+- 플레이어 생성 후 화면 왼쪽 위에 `[Input diagnostics]` 상자가 표시된다. Input System 설정, 포커스 상태, 키보드 장치 상태, 초당 키보드 이벤트 수를 보여 주며, 키 입력이 동작하지 않을 때 원인을 확인하는 용도다. Player 프리팹의 `InputDiagnosticsOverlay`에서 `Show Diagnostics`를 끄면 숨겨진다.
 
 ## 8. 구현 범위
 
