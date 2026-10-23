@@ -15,7 +15,7 @@
 
 ## 1. NGO 코인 게임
 
-화면 캡처(`Evidence/NGO/`)는 Host를 빌드 실행 파일(왼쪽), Client를 에디터(오른쪽)로 같은 컴퓨터에서 함께 띄워 찍었습니다.
+화면 캡처(`Evidence/NGO/`)는 같은 컴퓨터에서 빌드 실행 파일(왼쪽)과 에디터(오른쪽)를 함께 띄워 찍었습니다. `NGO_01`~`03`은 빌드가 Host, 에디터가 Client이고, `NGO_04`~`05`는 에디터가 Host, 빌드가 Client입니다. 각 화면 위쪽의 상태 문구(`Host: Online` / `Client: Connected to Host`)로 구분할 수 있습니다.
 
 | 시험 대상 | 실행 조건·재현 순서 | 기대 결과 | 실제 결과·측정값 | 수정·조정 내용 | 다시 확인한 결과 |
 | --- | --- | --- | --- | --- | --- |
@@ -27,15 +27,15 @@
 | 본인 플레이어 조작 (에디터 첫 플레이, 4차) | 위와 같음 | Host 플레이어가 입력 방향으로 이동 | 위 진단 값 기준: 설정·포커스·장치 상태는 정상인데 키보드 이벤트가 Input System의 `onEvent`까지 한 건도 오지 않음. 마우스는 동작하므로 키보드에만 해당하는 원인 | 소스(`InputManager.cs`) 기준으로 위 설정에서는 포커스 관련 폐기 경로가 모두 비활성이므로, 남는 후보는 ① 네이티브 키보드 이벤트의 장치 ID가 관리 측 `Keyboard`와 맞지 않아 "device not found"로 버려지는 경우 ② 한글 IME가 키 입력을 조합 입력으로 가로채는 경우. 조치: ⓐ `NetworkPlayerMovement`가 소유자 생성 시 `Keyboard.SetIMEEnabled(false)` 호출 (②의 수정 후보) ⓑ 진단 표시에 `imeSelected`, 마우스·기타 이벤트 수, `metrics events/s`, `updates/s`, 장치 ID, Unity 버전 추가 ⓒ 재발 시 Input Debugger → 옵션 메뉴 → Enable Event Diagnostics를 켜면 ①일 때 Console에 `Cannot find device for input event` 오류가 남음 | 재발. 진단 값: `imeSelected=False`, `onEvent keyboard=0`, `metrics events/s=0`. `metrics`는 모든 장치의 이벤트 수이므로 키보드만이 아니라 Input System이 처리한 이벤트 자체가 0이었음. IME(②)는 원인이 아님 |
 | 본인 플레이어 조작 (에디터 첫 플레이, 정리) | 프로젝트 폴더를 지우고 저장소에서 다시 받아 열기 (`Library`·`UserSettings` 새로 생성) → Play → Start Host → WASD | Host 플레이어가 입력 방향으로 이동 | 다시 받은 PC에서 정상 동작 | 원인 미확정. 위 1~4차 수정 중 포커스 관련 추정은 진단 값과 맞지 않았고, 다시 받은 뒤 해결된 점으로 보아 에디터가 만든 `Library`·`UserSettings` 쪽 상태로 추정. 제출 정리: 원인과 무관한 진단 표시(`InputDiagnosticsOverlay`)와 IME 호출은 제거. 동작에 영향이 없는 입력 설정(Ignore Focus, All Device Input Always Goes To Game View)과 Host·Client 동시 실행에 필요한 Run In Background는 유지. 재발 시 대처법은 `README.md` 7장 | 다시 받은 직후 이동 확인 (진단 표시 제거 후에는 Unity 배치 모드 컴파일만 확인) |
 | 본인 플레이어 조작 (Host·Client) | 각 창에서 이동 입력 | 본인 플레이어만 움직이고 상대 화면에 이동 반영 | 각 창에서 자기 플레이어만 움직이고, 그 이동이 상대 창에도 반영됨 | 없음 (기대대로 동작) | 해당 없음 (수정 없음) |
-| 코인 생성 | Host 시작 | 서버가 코인을 생성하고 모든 클라이언트에 표시 | Host 시작 후 코인 10개 생성, Client 화면에도 같은 위치에 표시 | 없음 (기대대로 동작) | 해당 없음 (수정 없음) |
+| 코인 생성 | Host 시작 | 서버가 코인을 생성하고 모든 클라이언트에 표시 | Host 시작 후 코인 10개 생성, Client 화면에도 같은 위치에 표시 (캡처: `Evidence/NGO/NGO_01_connect.png`) | 없음 (기대대로 동작) | 해당 없음 (수정 없음) |
 | 접촉 획득 | 플레이어를 코인 위로 이동 (키 입력 없음) | 자동 요청 후 `Accepted`, 점수 1 증가, 양쪽에서 코인 제거 | 커밋 `2ab86ca`에서 E 요청만 남기면서 코인에 닿아도 획득되지 않음 | 소유 클라이언트가 수평 거리 1.0 이내 코인에 대해 코인당 한 번 획득 요청을 자동 전송하도록 추가. 판정은 그대로 서버 `TryCollectCoin` | 수정 후 Host에서 코인 위를 지나가면 획득됨 |
 | 잘못된 코인 ID | `F1` (ID 999999 요청) | `InvalidCoinId`, 점수 변화 없음 | `My requests`에 `Coin 999999: InvalidCoinId`, 점수 변화 없음 (캡처: `Evidence/NGO/NGO_03_reject.png`) | 없음 (기대대로 동작) | 해당 없음 (수정 없음) |
 | 거리 초과 | 코인에서 떨어진 위치에서 `F2` (가장 먼 코인 요청) | `TooFar`, 점수 변화 없음, 코인 유지 | `My requests`에 `TooFar`, 점수 변화 없음, 요청한 코인 유지 (캡처: `Evidence/NGO/NGO_03_reject.png`) | 없음 (기대대로 동작) | 해당 없음 (수정 없음) |
 | 이미 획득한 코인 | 정상 획득 직후 `F4` (같은 ID 재요청) | `AlreadyCollected`, 점수 변화 없음 | `My requests`에 `AlreadyCollected`, 점수 변화 없음 | 없음 (기대대로 동작) | 해당 없음 (수정 없음) |
 | 중복 요청 | 코인에 닿기 직전 거리(1.0~1.5)에서 `F3` (같은 코인 두 번 요청) | `Accepted` 1건, `AlreadyCollected` 1건, 점수 1만 증가 | `Accepted` 1건, `AlreadyCollected` 1건, 점수 1만 증가 | 없음 (기대대로 동작) | 해당 없음 (수정 없음) |
 | 동시 획득 | Host와 Client가 같은 코인에 양쪽에서 거의 동시에 닿도록 이동 | 한쪽만 `Accepted`, 다른 쪽 `AlreadyCollected`, 보상 한 번 | 한쪽만 `Accepted`, 다른 쪽 `AlreadyCollected`, 보상은 한 번만 지급 | 없음 (기대대로 동작) | 해당 없음 (수정 없음) |
-| 개인 점수 분리·상태 일치 | 두 플레이어가 각각 코인 획득 | 플레이어별 점수와 남은 코인이 양쪽 화면에서 일치 | 플레이어별 점수와 `Coins left`가 Host·Client 화면에서 일치 (캡처: `Evidence/NGO/NGO_02_pickup.png`, `NGO_03_reject.png`) | 없음 (기대대로 동작) | 해당 없음 (수정 없음) |
-| 종료·재접속 | Client 종료 → 재접속 | Host 계속 실행, 재접속 Client가 현재 점수·남은 코인 수신 | Client 종료 후 Host 계속 실행. 재접속한 Client에 현재 점수판과 남은 코인이 그대로 표시되고, 재접속 플레이어는 0점부터 시작 | 없음 (기대대로 동작) | 해당 없음 (수정 없음) |
+| 개인 점수 분리·상태 일치 | 두 플레이어가 각각 코인 획득 | 플레이어별 점수와 남은 코인이 양쪽 화면에서 일치 | 플레이어별 점수와 `Coins left`가 Host·Client 화면에서 일치 (캡처: `Evidence/NGO/NGO_02_pickup.png`, `NGO_03_reject.png`, `NGO_04_console.png`) | 없음 (기대대로 동작) | 해당 없음 (수정 없음) |
+| 종료·재접속 | Client 종료 → 재접속 | Host 계속 실행, 재접속 Client가 현재 점수·남은 코인 수신 | Client 종료 후 Host 계속 실행. 재접속한 Client에 현재 점수판과 남은 코인이 그대로 표시되고, 재접속 플레이어는 0점부터 시작. Host Console에 `Client disconnected: 1` → `Client connected: 2`가 남고, 재접속한 Client는 `Player 2: 0`으로 표시됨 (캡처: `Evidence/NGO/NGO_05_reconnect.png`) | 없음 (기대대로 동작) | 해당 없음 (수정 없음) |
 
 ## 2. UDP 피어 통신
 
