@@ -1,0 +1,102 @@
+[09:38:32.092] <입력> A
+[09:38:32.200] === UDP Peer Position ===
+[09:38:32.229] Peer ID (A or B):
+[09:38:32.229] My peer ID: A
+[09:38:32.229] Local port: 5000
+[09:38:32.230] Remote peer: B
+[09:38:32.230] Remote port: 5001
+[09:38:32.230] 
+[09:38:32.230] Commands:
+[09:38:32.230]   move X Y  - Change my position and send it
+[09:38:32.230]   show      - Show both positions
+[09:38:32.230]   send      - Send my current position with a new sequence
+[09:38:32.230]   replay N  - Resend the original message with sequence N
+[09:38:32.230]   bench N       - Send N position messages
+[09:38:32.230]   benchstart N  - Start receiving test measurement
+[09:38:32.230]   benchstop     - Stop measurement and show results
+[09:38:32.230]   stats         - Show cumulative counters
+[09:38:32.230]   quit      - Exit
+[09:38:32.230] 
+
+[09:38:34.822] ##### after_round2: warm-up bench 1000 (excluded)
+[09:38:35.136] <입력> bench 1000
+[09:38:35.205] >
+[09:38:35.205] === Sender Benchmark Result ===
+[09:38:35.205] Requested messages: 1000
+[09:38:35.205] Send calls completed: 1000
+[09:38:35.205] Send errors: 0
+[09:38:35.206] Elapsed milliseconds: 66.94
+[09:38:35.206] Payload bytes sent: 33672
+[09:38:35.206] Average payload bytes per message: 33.67
+[09:38:35.206] Wait for the receiver to finish measuring.
+
+[09:38:37.142] ##### after_round2: run 1 bench 10000
+[09:38:37.454] <입력> bench 10000
+[09:38:37.644] >
+[09:38:37.644] === Sender Benchmark Result ===
+[09:38:37.645] Requested messages: 10000
+[09:38:37.645] Send calls completed: 10000
+[09:38:37.645] Send errors: 0
+[09:38:37.645] Elapsed milliseconds: 190.84
+[09:38:37.645] Payload bytes sent: 368780
+[09:38:37.645] Average payload bytes per message: 36.88
+[09:38:37.645] Wait for the receiver to finish measuring.
+
+[09:38:40.487] ##### after_round2: run 2 bench 10000
+[09:38:40.791] <입력> bench 10000
+[09:38:40.936] >
+[09:38:40.936] === Sender Benchmark Result ===
+[09:38:40.936] Requested messages: 10000
+[09:38:40.936] Send calls completed: 10000
+[09:38:40.936] Send errors: 0
+[09:38:40.936] Elapsed milliseconds: 144.97
+[09:38:40.936] Payload bytes sent: 377779
+[09:38:40.936] Average payload bytes per message: 37.78
+[09:38:40.936] Wait for the receiver to finish measuring.
+
+[09:38:43.817] ##### after_round2: run 3 bench 10000
+[09:38:44.131] <입력> bench 10000
+[09:38:44.265] >
+[09:38:44.265] === Sender Benchmark Result ===
+[09:38:44.265] Requested messages: 10000
+[09:38:44.265] Send calls completed: 10000
+[09:38:44.265] Send errors: 0
+[09:38:44.265] Elapsed milliseconds: 133.60
+[09:38:44.266] Payload bytes sent: 377779
+[09:38:44.266] Average payload bytes per message: 37.78
+[09:38:44.266] Wait for the receiver to finish measuring.
+
+[09:38:47.166] ##### after_round2: run 4 bench 10000
+[09:38:47.478] <입력> bench 10000
+[09:38:47.614] >
+[09:38:47.614] === Sender Benchmark Result ===
+[09:38:47.614] Requested messages: 10000
+[09:38:47.614] Send calls completed: 10000
+[09:38:47.614] Send errors: 0
+[09:38:47.614] Elapsed milliseconds: 136.19
+[09:38:47.614] Payload bytes sent: 377779
+[09:38:47.614] Average payload bytes per message: 37.78
+[09:38:47.614] Wait for the receiver to finish measuring.
+
+[09:38:50.498] ##### after_round2: run 5 bench 10000
+[09:38:50.808] <입력> bench 10000
+[09:38:50.917] >
+[09:38:50.917] === Sender Benchmark Result ===
+[09:38:50.917] Requested messages: 10000
+[09:38:50.917] Send calls completed: 10000
+[09:38:50.917] Send errors: 0
+[09:38:50.917] Elapsed milliseconds: 109.12
+[09:38:50.917] Payload bytes sent: 377779
+[09:38:50.917] Average payload bytes per message: 37.78
+[09:38:50.917] Wait for the receiver to finish measuring.
+[09:38:53.844] <입력> stats
+[09:38:53.844] >
+[09:38:53.845] === Cumulative Statistics ===
+[09:38:53.845] Send calls completed: 51000
+[09:38:53.845] Send errors: 0
+[09:38:53.845] Received datagrams: 0
+[09:38:53.845] Applied position messages: 0
+[09:38:53.845] Invalid messages: 0
+[09:38:53.845] Stale/duplicate messages: 0
+[09:38:55.063] <입력> quit
+[09:38:55.080] > Peer stopped.

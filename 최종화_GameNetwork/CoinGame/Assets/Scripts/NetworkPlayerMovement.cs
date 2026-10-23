@@ -30,11 +30,6 @@ public class NetworkPlayerMovement : NetworkBehaviour
         // Only the server moves CharacterControllers.
         characterController.enabled = IsServer;
 
-        // Movement keys are read as raw key state, so IME composition
-        // (e.g. Korean input mode) must not capture them.
-        if (IsOwner)
-            Keyboard.current?.SetIMEEnabled(false);
-
         localMoveInput = Vector2.zero;
         serverMoveInput = Vector2.zero;
         verticalVelocity = 0f;
@@ -74,9 +69,7 @@ public class NetworkPlayerMovement : NetworkBehaviour
         }
     }
 
-    // Read the devices directly instead of an InputAction.
-    // An InputAction did not receive input on the first Play after
-    // opening the Editor, while Keyboard.current did.
+    // Read WASD/arrow keys and the left stick directly from the devices.
     private static Vector2 ReadMoveInput()
     {
         Vector2 input = Vector2.zero;
@@ -118,37 +111,27 @@ public class NetworkPlayerMovement : NetworkBehaviour
         lastInputTime = Time.time;
     }
 
-private void MoveOnServer()
-{
-    if (!characterController.enabled)
-        return;
-
-    Vector3 before = transform.position;
-
-    Vector3 horizontalMovement = new Vector3(
-        serverMoveInput.x,
-        0f,
-        serverMoveInput.y
-    ) * moveSpeed;
-
-    if (characterController.isGrounded && verticalVelocity < 0f)
-        verticalVelocity = -2f;
-
-    verticalVelocity += gravity * Time.deltaTime;
-
-    Vector3 movement = horizontalMovement;
-    movement.y = verticalVelocity;
-
-    characterController.Move(movement * Time.deltaTime);
-
-    if (serverMoveInput != Vector2.zero)
+    private void MoveOnServer()
     {
-        Debug.Log(
-            $"Input: {serverMoveInput}, " +
-            $"Before: {before}, After: {transform.position}"
-        );
+        if (!characterController.enabled)
+            return;
+
+        Vector3 horizontalMovement = new Vector3(
+            serverMoveInput.x,
+            0f,
+            serverMoveInput.y
+        ) * moveSpeed;
+
+        if (characterController.isGrounded && verticalVelocity < 0f)
+            verticalVelocity = -2f;
+
+        verticalVelocity += gravity * Time.deltaTime;
+
+        Vector3 movement = horizontalMovement;
+        movement.y = verticalVelocity;
+
+        characterController.Move(movement * Time.deltaTime);
     }
-}
 
     public override void OnNetworkDespawn()
     {

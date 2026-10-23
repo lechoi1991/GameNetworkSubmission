@@ -1,0 +1,102 @@
+[09:38:06.806] <입력> A
+[09:38:06.894] === UDP Peer Position ===
+[09:38:06.912] Peer ID (A or B):
+[09:38:06.912] My peer ID: A
+[09:38:06.913] Local port: 5000
+[09:38:06.913] Remote peer: B
+[09:38:06.913] Remote port: 5001
+[09:38:06.913] 
+[09:38:06.913] Commands:
+[09:38:06.913]   move X Y  - Change my position and send it
+[09:38:06.913]   show      - Show both positions
+[09:38:06.913]   send      - Send my current position with a new sequence
+[09:38:06.913]   replay N  - Resend the original message with sequence N
+[09:38:06.913]   bench N       - Send N position messages
+[09:38:06.913]   benchstart N  - Start receiving test measurement
+[09:38:06.913]   benchstop     - Stop measurement and show results
+[09:38:06.913]   stats         - Show cumulative counters
+[09:38:06.913]   quit      - Exit
+[09:38:06.913] 
+
+[09:38:09.539] ##### before_round2: warm-up bench 1000 (excluded)
+[09:38:09.850] <입력> bench 1000
+[09:38:09.907] >
+[09:38:09.907] === Sender Benchmark Result ===
+[09:38:09.907] Requested messages: 1000
+[09:38:09.907] Send calls completed: 1000
+[09:38:09.907] Send errors: 0
+[09:38:09.907] Elapsed milliseconds: 54.13
+[09:38:09.907] Payload bytes sent: 45672
+[09:38:09.907] Average payload bytes per message: 45.67
+[09:38:09.907] Wait for the receiver to finish measuring.
+
+[09:38:11.880] ##### before_round2: run 1 bench 10000
+[09:38:12.190] <입력> bench 10000
+[09:38:12.366] >
+[09:38:12.366] === Sender Benchmark Result ===
+[09:38:12.366] Requested messages: 10000
+[09:38:12.366] Send calls completed: 10000
+[09:38:12.366] Send errors: 0
+[09:38:12.366] Elapsed milliseconds: 176.83
+[09:38:12.366] Payload bytes sent: 488780
+[09:38:12.366] Average payload bytes per message: 48.88
+[09:38:12.366] Wait for the receiver to finish measuring.
+
+[09:38:15.232] ##### before_round2: run 2 bench 10000
+[09:38:15.543] <입력> bench 10000
+[09:38:15.682] >
+[09:38:15.682] === Sender Benchmark Result ===
+[09:38:15.682] Requested messages: 10000
+[09:38:15.682] Send calls completed: 10000
+[09:38:15.682] Send errors: 0
+[09:38:15.682] Elapsed milliseconds: 139.35
+[09:38:15.682] Payload bytes sent: 497779
+[09:38:15.682] Average payload bytes per message: 49.78
+[09:38:15.682] Wait for the receiver to finish measuring.
+
+[09:38:18.567] ##### before_round2: run 3 bench 10000
+[09:38:18.883] <입력> bench 10000
+[09:38:18.993] >
+[09:38:18.993] === Sender Benchmark Result ===
+[09:38:18.993] Requested messages: 10000
+[09:38:18.993] Send calls completed: 10000
+[09:38:18.993] Send errors: 0
+[09:38:18.993] Elapsed milliseconds: 109.98
+[09:38:18.993] Payload bytes sent: 497779
+[09:38:18.993] Average payload bytes per message: 49.78
+[09:38:18.993] Wait for the receiver to finish measuring.
+
+[09:38:21.919] ##### before_round2: run 4 bench 10000
+[09:38:22.231] <입력> bench 10000
+[09:38:22.351] >
+[09:38:22.351] === Sender Benchmark Result ===
+[09:38:22.351] Requested messages: 10000
+[09:38:22.351] Send calls completed: 10000
+[09:38:22.351] Send errors: 0
+[09:38:22.351] Elapsed milliseconds: 118.92
+[09:38:22.351] Payload bytes sent: 497779
+[09:38:22.351] Average payload bytes per message: 49.78
+[09:38:22.351] Wait for the receiver to finish measuring.
+
+[09:38:25.259] ##### before_round2: run 5 bench 10000
+[09:38:25.571] <입력> bench 10000
+[09:38:25.698] >
+[09:38:25.698] === Sender Benchmark Result ===
+[09:38:25.698] Requested messages: 10000
+[09:38:25.698] Send calls completed: 10000
+[09:38:25.698] Send errors: 0
+[09:38:25.698] Elapsed milliseconds: 126.76
+[09:38:25.698] Payload bytes sent: 497779
+[09:38:25.698] Average payload bytes per message: 49.78
+[09:38:25.698] Wait for the receiver to finish measuring.
+[09:38:28.600] <입력> stats
+[09:38:28.600] >
+[09:38:28.601] === Cumulative Statistics ===
+[09:38:28.601] Send calls completed: 51000
+[09:38:28.601] Send errors: 0
+[09:38:28.601] Received datagrams: 0
+[09:38:28.601] Applied position messages: 0
+[09:38:28.601] Invalid messages: 0
+[09:38:28.601] Stale/duplicate messages: 0
+[09:38:29.818] <입력> quit
+[09:38:29.834] > Peer stopped.

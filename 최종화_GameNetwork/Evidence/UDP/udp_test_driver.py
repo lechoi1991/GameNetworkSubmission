@@ -66,12 +66,13 @@ bad = [
     (b"   ", "공백만 있는 메시지"),
     (b"{bad json", "JSON 형식 오류"),
     (b"null", "null JSON"),
-    (b'{"PeerId":"B","Sequence":1,"X":"abc","Y":2}', "X에 문자열 (해석 불가 값)"),
-    (b'{"PeerId":"B","Sequence":1,"X":99999999999,"Y":2}', "X가 int 범위 초과"),
-    (b'{"PeerId":"A","Sequence":1,"X":1,"Y":1}', "자기 자신(A)의 ID"),
-    (b'{"PeerId":"C","Sequence":1,"X":1,"Y":1}', "알 수 없는 피어 ID"),
-    (b'{"PeerId":"B","Sequence":0,"X":1,"Y":1}', "순서 번호 0"),
-    (b'{"PeerId":"B","Sequence":-5,"X":1,"Y":1}', "음수 순서 번호"),
+    (b'{"p":"B","s":1,"x":"abc","y":2}', "X에 문자열 (해석 불가 값)"),
+    (b'{"p":"B","s":1,"x":99999999999,"y":2}', "X가 int 범위 초과"),
+    (b'{"p":"A","s":1,"x":1,"y":1}', "자기 자신(A)의 ID"),
+    (b'{"p":"C","s":1,"x":1,"y":1}', "알 수 없는 피어 ID"),
+    (b'{"p":"B","s":0,"x":1,"y":1}', "순서 번호 0"),
+    (b'{"p":"B","s":-5,"x":1,"y":1}', "음수 순서 번호"),
+    (b'{"PeerId":"B","Sequence":1,"X":1,"Y":1}', "조정 전 형식(긴 필드 이름)"),
 ]
 tester_log = open(os.path.join(OUT, "invalid_sender_log.txt"), "w", encoding="utf-8")
 tester_log.write("시험 송신기: 127.0.0.1:5001 -> 127.0.0.1:5000 (피어 A)\n\n")
@@ -86,7 +87,7 @@ s.close()
 
 other = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 other.bind(("127.0.0.1", 6000))
-payload = b'{"PeerId":"B","Sequence":1,"X":1,"Y":1}'
+payload = b'{"p":"B","s":1,"x":1,"y":1}'
 a.note(f"시험 송신기(포트 6000) -> A: 설정하지 않은 송신 주소: {payload!r}")
 tester_log.write(f"[{ts()}] 설정하지 않은 송신 포트 6000: {payload!r}\n")
 other.sendto(payload, ("127.0.0.1", 5000))

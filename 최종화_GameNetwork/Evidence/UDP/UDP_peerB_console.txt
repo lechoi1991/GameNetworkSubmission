@@ -1,125 +1,127 @@
-[12:49:51.393] <입력> B   (Peer ID 입력)
-[12:49:51.467] === UDP Peer Position ===
-[12:49:51.484] Peer ID (A or B):
-[12:49:51.484] My peer ID: B
-[12:49:51.484] Local port: 5001
-[12:49:51.484] Remote peer: A
-[12:49:51.484] Remote port: 5000
-[12:49:51.484] 
-[12:49:51.484] Commands:
-[12:49:51.484]   move X Y  - Change my position and send it
-[12:49:51.485]   show      - Show both positions
-[12:49:51.485]   send      - Send my current position with a new sequence
-[12:49:51.485]   replay N  - Resend the original message with sequence N
-[12:49:51.485]   bench N       - Send N position messages
-[12:49:51.485]   benchstart N  - Start receiving test measurement
-[12:49:51.485]   benchstop     - Stop measurement and show results
-[12:49:51.485]   stats         - Show cumulative counters
-[12:49:51.485]   quit      - Exit
-[12:49:51.485] 
+[09:39:35.301] <입력> B   (Peer ID 입력)
+[09:39:35.401] === UDP Peer Position ===
+[09:39:35.432] Peer ID (A or B):
+[09:39:35.432] My peer ID: B
+[09:39:35.433] Local port: 5001
+[09:39:35.433] Remote peer: A
+[09:39:35.433] Remote port: 5000
+[09:39:35.433] 
+[09:39:35.433] Commands:
+[09:39:35.433]   move X Y  - Change my position and send it
+[09:39:35.433]   show      - Show both positions
+[09:39:35.433]   send      - Send my current position with a new sequence
+[09:39:35.433]   replay N  - Resend the original message with sequence N
+[09:39:35.433]   bench N       - Send N position messages
+[09:39:35.433]   benchstart N  - Start receiving test measurement
+[09:39:35.433]   benchstop     - Stop measurement and show results
+[09:39:35.433]   stats         - Show cumulative counters
+[09:39:35.433]   quit      - Exit
+[09:39:35.433] 
 
-[12:49:53.507] ##### 시험 2: 양쪽 위치 변경·전송과 상대 위치 표시
-[12:49:53.507] <입력> show   (상대 미수신 상태 확인)
-[12:49:53.507] >
-[12:49:53.507] My position (B): (0, 0)
-[12:49:53.507] Remote position (A): Not received yet
-[12:49:53.507] 
-[12:49:54.165] >
-[12:49:54.165] [Updated] Peer=A, Seq=1, Position=(3, 5)
-[12:49:54.728] <입력> move 8 2
-[12:49:54.733] > [Sent] Seq=1, Data={"PeerId":"B","Sequence":1,"X":8,"Y":2}
-[12:49:55.937] <입력> show
-[12:49:55.937] >
-[12:49:55.937] My position (B): (8, 2)
-[12:49:55.937] Remote position (A): (3, 5), Sequence=1
-[12:49:55.937] 
+[09:39:37.416] ##### 시험 2: 양쪽 위치 변경·전송과 상대 위치 표시
+[09:39:37.416] <입력> show   (상대 미수신 상태 확인)
+[09:39:37.417] >
+[09:39:37.417] My position (B): (0, 0)
+[09:39:37.417] Remote position (A): Not received yet
+[09:39:37.417] 
+[09:39:38.091] >
+[09:39:38.091] [Updated] Peer=A, Seq=1, Position=(3, 5)
+[09:39:38.639] <입력> move 8 2
+[09:39:38.647] > [Sent] Seq=1, Data={"p":"B","s":1,"x":8,"y":2}
+[09:39:39.858] <입력> show
+[09:39:39.858] >
+[09:39:39.858] My position (B): (8, 2)
+[09:39:39.858] Remote position (A): (3, 5), Sequence=1
+[09:39:39.858] 
 
-[12:49:56.548] ##### 시험 3: 오래된 순서 번호·중복 순서 번호 무시 (A가 replay로 당시 메시지를 그대로 재전송)
-[12:49:56.548] >
-[12:49:56.549] [Updated] Peer=A, Seq=2, Position=(4, 6)
-[12:49:57.154] >
-[12:49:57.154] [Updated] Peer=A, Seq=3, Position=(7, 7)
-[12:49:57.758] <입력> show   (B가 반영한 A 위치 (7, 7) Seq=3 확인)
-[12:49:57.758] >
-[12:49:57.758] My position (B): (8, 2)
-[12:49:57.758] Remote position (A): (7, 7), Sequence=3
-[12:49:57.758] 
-[12:49:58.368] > [Ignored stale/duplicate] Peer=A, Seq=2, Last applied=3
-[12:49:58.975] [Ignored stale/duplicate] Peer=A, Seq=1, Last applied=3
-[12:49:59.578] [Ignored stale/duplicate] Peer=A, Seq=3, Last applied=3
-[12:50:00.185] <입력> show   (여전히 (7, 7) Seq=3 이어야 함)
-[12:50:00.185] 
-[12:50:00.185] My position (B): (8, 2)
-[12:50:00.185] Remote position (A): (7, 7), Sequence=3
-[12:50:00.185] 
-[12:50:00.789] >
-[12:50:00.789] [Updated] Peer=A, Seq=4, Position=(3, 5)
-[12:50:01.389] <입력> show
-[12:50:01.389] >
-[12:50:01.389] My position (B): (8, 2)
-[12:50:01.389] Remote position (A): (3, 5), Sequence=4
-[12:50:01.389] 
+[09:39:40.471] ##### 시험 3: 오래된 순서 번호·중복 순서 번호 무시 (A가 replay로 당시 메시지를 그대로 재전송)
+[09:39:40.472] >
+[09:39:40.472] [Updated] Peer=A, Seq=2, Position=(4, 6)
+[09:39:41.078] >
+[09:39:41.078] [Updated] Peer=A, Seq=3, Position=(7, 7)
+[09:39:41.688] <입력> show   (B가 반영한 A 위치 (7, 7) Seq=3 확인)
+[09:39:41.688] >
+[09:39:41.688] My position (B): (8, 2)
+[09:39:41.688] Remote position (A): (7, 7), Sequence=3
+[09:39:41.689] 
+[09:39:42.303] > [Ignored stale/duplicate] Peer=A, Seq=2, Last applied=3
+[09:39:42.907] [Ignored stale/duplicate] Peer=A, Seq=1, Last applied=3
+[09:39:43.519] [Ignored stale/duplicate] Peer=A, Seq=3, Last applied=3
+[09:39:44.128] <입력> show   (여전히 (7, 7) Seq=3 이어야 함)
+[09:39:44.128] 
+[09:39:44.128] My position (B): (8, 2)
+[09:39:44.128] Remote position (A): (7, 7), Sequence=3
+[09:39:44.128] 
+[09:39:44.728] >
+[09:39:44.728] [Updated] Peer=A, Seq=4, Position=(3, 5)
+[09:39:45.339] <입력> show
+[09:39:45.339] >
+[09:39:45.339] My position (B): (8, 2)
+[09:39:45.339] Remote position (A): (3, 5), Sequence=4
+[09:39:45.339] 
 
-[12:50:01.991] ##### 시험 4: 전송량 조건 비교
-[12:50:01.991] <입력> benchstart 100
-[12:50:01.992] >
-[12:50:01.992] === Receiver Measurement Started ===
-[12:50:01.992] Expected messages: 100
-[12:50:01.992] Run the sender's bench command now.
-[12:50:01.992] Use benchstop after the sender finishes.
-[12:50:04.308] <입력> benchstop
-[12:50:04.309] >
-[12:50:04.309] === Receiver Benchmark Result ===
-[12:50:04.309] Expected messages: 100
-[12:50:04.309] Datagrams observed during window: 100
-[12:50:04.309] Observed missing at stop: 0
-[12:50:04.310] Measurement window milliseconds: 2316.66
-[12:50:04.310] The missing count is an observation at stop time, not proof that every unobserved datagram was permanently lost.
-[12:50:04.820] <입력> show
-[12:50:04.820] >
-[12:50:04.820] My position (B): (8, 2)
-[12:50:04.820] Remote position (A): (99, -99), Sequence=104
-[12:50:04.820] 
-[12:50:05.435] <입력> benchstart 10000
-[12:50:05.435] >
-[12:50:05.435] === Receiver Measurement Started ===
-[12:50:05.435] Expected messages: 10000
-[12:50:05.435] Run the sender's bench command now.
-[12:50:05.435] Use benchstop after the sender finishes.
-[12:50:07.755] <입력> benchstop
-[12:50:07.755] >
-[12:50:07.755] === Receiver Benchmark Result ===
-[12:50:07.755] Expected messages: 10000
-[12:50:07.755] Datagrams observed during window: 10000
-[12:50:07.755] Observed missing at stop: 0
-[12:50:07.755] Measurement window milliseconds: 2320.62
-[12:50:07.755] The missing count is an observation at stop time, not proof that every unobserved datagram was permanently lost.
-[12:50:08.265] <입력> show
-[12:50:08.265] >
-[12:50:08.265] My position (B): (8, 2)
-[12:50:08.265] Remote position (A): (9999, -9999), Sequence=10104
-[12:50:08.265] 
-[12:50:09.184] <입력> bench 10000
-[12:50:09.310] >
-[12:50:09.310] === Sender Benchmark Result ===
-[12:50:09.310] Requested messages: 10000
-[12:50:09.310] Send calls completed: 10000
-[12:50:09.310] Send errors: 0
-[12:50:09.310] Elapsed milliseconds: 124.46
-[12:50:09.310] Wait for the receiver to finish measuring.
-[12:50:12.312] <입력> show
-[12:50:12.312] >
-[12:50:12.312] My position (B): (8, 2)
-[12:50:12.312] Remote position (A): (9999, -9999), Sequence=10104
-[12:50:12.312] 
-[12:50:13.524] <입력> stats
-[12:50:13.524] >
-[12:50:13.525] === Cumulative Statistics ===
-[12:50:13.525] Send calls completed: 10001
-[12:50:13.525] Send errors: 0
-[12:50:13.525] Received datagrams: 10107
-[12:50:13.525] Applied position messages: 10104
-[12:50:13.525] Invalid messages: 0
-[12:50:13.526] Stale/duplicate messages: 3
-[12:50:15.439] <입력> quit
-[12:50:15.444] > Peer stopped.
+[09:39:45.948] ##### 시험 4: 전송량 조건 비교
+[09:39:45.948] <입력> benchstart 100
+[09:39:45.949] >
+[09:39:45.949] === Receiver Measurement Started ===
+[09:39:45.949] Expected messages: 100
+[09:39:45.949] Run the sender's bench command now.
+[09:39:45.949] Use benchstop after the sender finishes.
+[09:39:48.272] <입력> benchstop
+[09:39:48.273] >
+[09:39:48.273] === Receiver Benchmark Result ===
+[09:39:48.273] Expected messages: 100
+[09:39:48.273] Datagrams observed during window: 100
+[09:39:48.273] Observed missing at stop: 0
+[09:39:48.273] Measurement window milliseconds: 2324.11
+[09:39:48.273] The missing count is an observation at stop time, not proof that every unobserved datagram was permanently lost.
+[09:39:48.788] <입력> show
+[09:39:48.788] >
+[09:39:48.788] My position (B): (8, 2)
+[09:39:48.788] Remote position (A): (99, -99), Sequence=104
+[09:39:48.788] 
+[09:39:49.393] <입력> benchstart 10000
+[09:39:49.393] >
+[09:39:49.393] === Receiver Measurement Started ===
+[09:39:49.393] Expected messages: 10000
+[09:39:49.393] Run the sender's bench command now.
+[09:39:49.393] Use benchstop after the sender finishes.
+[09:39:51.713] <입력> benchstop
+[09:39:51.713] >
+[09:39:51.713] === Receiver Benchmark Result ===
+[09:39:51.713] Expected messages: 10000
+[09:39:51.713] Datagrams observed during window: 10000
+[09:39:51.713] Observed missing at stop: 0
+[09:39:51.713] Measurement window milliseconds: 2320.02
+[09:39:51.713] The missing count is an observation at stop time, not proof that every unobserved datagram was permanently lost.
+[09:39:52.225] <입력> show
+[09:39:52.225] >
+[09:39:52.225] My position (B): (8, 2)
+[09:39:52.225] Remote position (A): (9999, -9999), Sequence=10104
+[09:39:52.225] 
+[09:39:53.144] <입력> bench 10000
+[09:39:53.337] >
+[09:39:53.337] === Sender Benchmark Result ===
+[09:39:53.337] Requested messages: 10000
+[09:39:53.337] Send calls completed: 10000
+[09:39:53.337] Send errors: 0
+[09:39:53.337] Elapsed milliseconds: 191.50
+[09:39:53.337] Payload bytes sent: 366677
+[09:39:53.337] Average payload bytes per message: 36.67
+[09:39:53.337] Wait for the receiver to finish measuring.
+[09:39:56.266] <입력> show
+[09:39:56.267] >
+[09:39:56.267] My position (B): (8, 2)
+[09:39:56.267] Remote position (A): (9999, -9999), Sequence=10104
+[09:39:56.267] 
+[09:39:57.474] <입력> stats
+[09:39:57.474] >
+[09:39:57.474] === Cumulative Statistics ===
+[09:39:57.474] Send calls completed: 10001
+[09:39:57.474] Send errors: 0
+[09:39:57.474] Received datagrams: 10107
+[09:39:57.475] Applied position messages: 10104
+[09:39:57.475] Invalid messages: 0
+[09:39:57.475] Stale/duplicate messages: 3
+[09:39:59.398] <입력> quit
+[09:39:59.405] > Peer stopped.

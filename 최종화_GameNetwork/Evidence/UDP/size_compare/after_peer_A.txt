@@ -1,0 +1,102 @@
+[09:37:24.845] <입력> A
+[09:37:24.916] === UDP Peer Position ===
+[09:37:24.929] Peer ID (A or B):
+[09:37:24.929] My peer ID: A
+[09:37:24.929] Local port: 5000
+[09:37:24.929] Remote peer: B
+[09:37:24.929] Remote port: 5001
+[09:37:24.930] 
+[09:37:24.930] Commands:
+[09:37:24.930]   move X Y  - Change my position and send it
+[09:37:24.930]   show      - Show both positions
+[09:37:24.930]   send      - Send my current position with a new sequence
+[09:37:24.930]   replay N  - Resend the original message with sequence N
+[09:37:24.930]   bench N       - Send N position messages
+[09:37:24.932]   benchstart N  - Start receiving test measurement
+[09:37:24.932]   benchstop     - Stop measurement and show results
+[09:37:24.932]   stats         - Show cumulative counters
+[09:37:24.932]   quit      - Exit
+[09:37:24.932] 
+
+[09:37:27.576] ##### after: warm-up bench 1000 (excluded)
+[09:37:27.888] <입력> bench 1000
+[09:37:27.939] >
+[09:37:27.939] === Sender Benchmark Result ===
+[09:37:27.939] Requested messages: 1000
+[09:37:27.939] Send calls completed: 1000
+[09:37:27.939] Send errors: 0
+[09:37:27.939] Elapsed milliseconds: 49.12
+[09:37:27.939] Payload bytes sent: 33672
+[09:37:27.939] Average payload bytes per message: 33.67
+[09:37:27.939] Wait for the receiver to finish measuring.
+
+[09:37:29.903] ##### after: run 1 bench 10000
+[09:37:30.214] <입력> bench 10000
+[09:37:30.349] >
+[09:37:30.349] === Sender Benchmark Result ===
+[09:37:30.349] Requested messages: 10000
+[09:37:30.349] Send calls completed: 10000
+[09:37:30.349] Send errors: 0
+[09:37:30.349] Elapsed milliseconds: 135.29
+[09:37:30.349] Payload bytes sent: 368780
+[09:37:30.349] Average payload bytes per message: 36.88
+[09:37:30.349] Wait for the receiver to finish measuring.
+
+[09:37:33.234] ##### after: run 2 bench 10000
+[09:37:33.545] <입력> bench 10000
+[09:37:33.651] >
+[09:37:33.651] === Sender Benchmark Result ===
+[09:37:33.651] Requested messages: 10000
+[09:37:33.651] Send calls completed: 10000
+[09:37:33.651] Send errors: 0
+[09:37:33.651] Elapsed milliseconds: 106.15
+[09:37:33.651] Payload bytes sent: 377779
+[09:37:33.651] Average payload bytes per message: 37.78
+[09:37:33.651] Wait for the receiver to finish measuring.
+
+[09:37:36.564] ##### after: run 3 bench 10000
+[09:37:36.879] <입력> bench 10000
+[09:37:36.972] >
+[09:37:36.972] === Sender Benchmark Result ===
+[09:37:36.972] Requested messages: 10000
+[09:37:36.972] Send calls completed: 10000
+[09:37:36.972] Send errors: 0
+[09:37:36.972] Elapsed milliseconds: 93.20
+[09:37:36.972] Payload bytes sent: 377779
+[09:37:36.972] Average payload bytes per message: 37.78
+[09:37:36.972] Wait for the receiver to finish measuring.
+
+[09:37:39.886] ##### after: run 4 bench 10000
+[09:37:40.201] <입력> bench 10000
+[09:37:40.293] >
+[09:37:40.293] === Sender Benchmark Result ===
+[09:37:40.293] Requested messages: 10000
+[09:37:40.293] Send calls completed: 10000
+[09:37:40.293] Send errors: 0
+[09:37:40.293] Elapsed milliseconds: 92.12
+[09:37:40.293] Payload bytes sent: 377779
+[09:37:40.293] Average payload bytes per message: 37.78
+[09:37:40.293] Wait for the receiver to finish measuring.
+
+[09:37:43.240] ##### after: run 5 bench 10000
+[09:37:43.553] <입력> bench 10000
+[09:37:43.649] >
+[09:37:43.649] === Sender Benchmark Result ===
+[09:37:43.649] Requested messages: 10000
+[09:37:43.649] Send calls completed: 10000
+[09:37:43.649] Send errors: 0
+[09:37:43.649] Elapsed milliseconds: 95.69
+[09:37:43.649] Payload bytes sent: 377779
+[09:37:43.649] Average payload bytes per message: 37.78
+[09:37:43.649] Wait for the receiver to finish measuring.
+[09:37:46.576] <입력> stats
+[09:37:46.576] >
+[09:37:46.576] === Cumulative Statistics ===
+[09:37:46.577] Send calls completed: 51000
+[09:37:46.577] Send errors: 0
+[09:37:46.577] Received datagrams: 0
+[09:37:46.577] Applied position messages: 0
+[09:37:46.577] Invalid messages: 0
+[09:37:46.577] Stale/duplicate messages: 0
+[09:37:47.789] <입력> quit
+[09:37:47.794] > Peer stopped.

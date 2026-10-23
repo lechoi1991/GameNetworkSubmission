@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
@@ -460,6 +461,9 @@ internal class Program
     var timer = Stopwatch.StartNew();
     long completedBefore = Interlocked.Read(ref sendCompletedPackets);
 
+    // UDP payload bytes only (IPv4 20 + UDP 8 header bytes are not included).
+    long payloadBytes = 0;
+
     isBenchmarkSending = true;
 
     try
@@ -479,6 +483,7 @@ internal class Program
 
             string json = JsonSerializer.Serialize(message, jsonOptions);
             sentHistory[message.Sequence] = json;
+            payloadBytes += Encoding.UTF8.GetByteCount(json);
 
             await SendJsonAsync(json, message.Sequence, false);
         }
@@ -498,6 +503,8 @@ internal class Program
     Console.WriteLine($"Send calls completed: {completed}");
     Console.WriteLine($"Send errors: {count - completed}");
     Console.WriteLine($"Elapsed milliseconds: {timer.Elapsed.TotalMilliseconds:F2}");
+    Console.WriteLine($"Payload bytes sent: {payloadBytes}");
+    Console.WriteLine($"Average payload bytes per message: {(double)payloadBytes / count:F2}");
     Console.WriteLine("Wait for the receiver to finish measuring.");
 }
 
@@ -593,11 +600,20 @@ private static void StopBenchmarkCapture()
     }
 
     // 위치 메시지에 포함되는 데이터 구조입니다.
+    // 메시지 크기를 줄이기 위해 JSON 필드 이름을 한 글자로 씁니다.
+    // 예: {"p":"A","s":1,"x":3,"y":5}
     private sealed class PositionMessage
     {
+        [JsonPropertyName("p")]
         public string PeerId { get; set; } = "";
+
+        [JsonPropertyName("s")]
         public long Sequence { get; set; }
+
+        [JsonPropertyName("x")]
         public int X { get; set; }
+
+        [JsonPropertyName("y")]
         public int Y { get; set; }
     }
 }

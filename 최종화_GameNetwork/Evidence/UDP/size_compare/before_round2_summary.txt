@@ -1,0 +1,7 @@
+before_round2: A -> B, bench 10000, 5 runs after a 1,000-message warm-up
+run 1: sent=10000 errors=0 received=10000 missing=0 payload_bytes=488780 avg_bytes=48.88 send_ms=176.83 | B Remote position (A): (9999, -9999), Sequence=11000
+run 2: sent=10000 errors=0 received=10000 missing=0 payload_bytes=497779 avg_bytes=49.78 send_ms=139.35 | B Remote position (A): (9999, -9999), Sequence=21000
+run 3: sent=10000 errors=0 received=10000 missing=0 payload_bytes=497779 avg_bytes=49.78 send_ms=109.98 | B Remote position (A): (9999, -9999), Sequence=31000
+run 4: sent=10000 errors=0 received=10000 missing=0 payload_bytes=497779 avg_bytes=49.78 send_ms=118.92 | B Remote position (A): (9999, -9999), Sequence=41000
+run 5: sent=10000 errors=0 received=10000 missing=0 payload_bytes=497779 avg_bytes=49.78 send_ms=126.76 | B Remote position (A): (9999, -9999), Sequence=51000
+average send_ms=134.37

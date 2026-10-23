@@ -198,25 +198,22 @@ UdpPeerPosition은 C#/.NET 10으로 구현하는 콘솔 애플리케이션이다
 
 ## 3.3 메시지 설계
 
-위치 메시지는 JSON으로 직렬화한다.
+위치 메시지는 JSON으로 직렬화한다. 하나의 UDP 데이터그램에 메시지 하나를 UTF-8로 담는다.
 
-| 필드 | 자료형 | 설명 |
-|---|---|---|
-| `PeerId` | string | 메시지를 보낸 피어의 ID |
-| `Sequence` | long | 메시지 순서 번호 |
-| `X` | int | X 좌표 |
-| `Y` | int | Y 좌표 |
+| JSON 필드 | C# 속성 | 자료형 | 설명 |
+|---|---|---|---|
+| `p` | `PeerId` | string | 메시지를 보낸 피어의 ID (`A` 또는 `B`) |
+| `s` | `Sequence` | long | 메시지 순서 번호 (1부터 증가) |
+| `x` | `X` | int | X 좌표 |
+| `y` | `Y` | int | Y 좌표 |
 
-메시지 예시:
+메시지 예시 (27바이트):
 
 ```json
-{
-  "PeerId": "A",
-  "Sequence": 1,
-  "X": 3,
-  "Y": 5
-}
+{"p":"A","s":1,"x":3,"y":5}
 ```
+
+처음에는 C# 속성 이름을 그대로 쓴 `{"PeerId":"A","Sequence":1,"X":3,"Y":5}` (39바이트) 형식이었다. 메시지 크기를 줄이기 위해 `[JsonPropertyName]`으로 필드 이름을 한 글자로 바꿨다. 10,000개 시험 기준 메시지당 평균 49.78 B → 37.78 B (−24%)다 (`TEST_REPORT.md` 3장). 필드 이름을 읽기 어려워지는 대신 크기가 줄어든다. 이전 형식 메시지는 필드를 찾지 못해 `Invalid message fields`로 무시된다.
 
 새로운 위치 메시지를 생성할 때마다 순서 번호를 증가시킨다. 기존 메시지를 재전송하는 경우에는 원래의 순서 번호와 좌표를 유지한다.
 
@@ -329,27 +326,75 @@ CoinGame에서는 클라이언트가 요청하더라도 서버가 게임 규칙�
 
 반면 UdpPeerPosition에서는 각 피어가 상대 메시지를 수신하고 순서 번호를 검사하여 상대 좌표를 갱신한다. 이 프로젝트는 게임 서버의 권한 구조를 구현하는 것이 아니라, UDP 통신과 메시지 처리 원리를 학습하는 데 목적이 있다.
 
-# 5. 향후 검증 및 개선 사항
+# 5. 실시간 상태와 보관 데이터
+
+두 프로그램 모두 상태를 메모리에만 두며, 파일이나 DB에 저장하지 않는다. 프로그램(Host 또는 피어)이 종료되면 모든 상태가 사라진다.
+
+| 데이터 | 위치 | 성격 | 종료 시 |
+|---|---|---|---|
+| 플레이어 위치 | 서버 `CharacterController` → `NetworkTransform` | 실시간 | 사라짐 |
+| 플레이어 점수 | `NetworkScorePlayer.Score` (NetworkVariable, 서버만 쓰기) | 세션 동안 유지 | 사라짐. 재접속한 Client는 새 플레이어로 0점부터 |
+| 코인 ID·위치 | `NetworkCoin.CoinId` (NetworkVariable), 코인 NetworkObject | 실시간 | 사라짐 |
+| 활성·획득 코인 목록 | 서버 `NetworkCoinSpawner.activeCoins`, `collectedCoinIds` | 세션 동안 유지 (판정용) | 사라짐 |
+| UDP 내 위치·상대 위치 | `Program.myX/myY`, `remoteX/remoteY` | 실시간 | 사라짐 |
+| UDP 순서 번호 | `nextSequence`, `lastReceivedSequence` | 세션 동안 유지 (최신 판정용) | 사라짐. 재시작 후 1부터 |
+| UDP 보낸 메시지 기록 | `sentHistory` (replay 시험용) | 세션 동안 유지 | 사라짐 |
+
+오래 보관할 가치가 있는 데이터는 플레이어별 누적 점수, 경기 결과, 아래 운영 로그다. 이번 과제 범위에서는 저장하지 않는다.
+
+# 6. 운영 상태 기록
+
+현재 남기는 로그는 다음과 같다. NGO 쪽은 Unity Console(빌드에서는 `Player.log`), UDP 쪽은 콘솔 출력이다.
+
+| 구분 | 로그 | 출처 |
+|---|---|---|
+| 접속 | `Client connected: <id>`, `Client disconnected: <id>`, 화면 상태 문구 (`Host: Online`, `Client: Connected to Host`, `Failed to Start Host` 등) | `NetworkConnectionUI` |
+| 코인 판정 | `[CoinRequest] client=<id> coin=<id> result=<결과> score=<점수>` (서버) | `NetworkCoinCollector` |
+| 판정 결과 수신 | `[CoinResult] coin=<id> result=<결과>` (요청한 쪽) | `NetworkCoinCollector` |
+| 점수 변경 | `Player <id> score: <점수>` | `NetworkScorePlayer` |
+| 비정상 요청 | 소유자가 아닌 클라이언트의 요청 경고 | `NetworkCoinCollector` |
+| 설정 오류 | 코인 프리팹 미지정, NetworkManager 없음, 생성 위치 부족 경고 | `NetworkCoinSpawner`, `NetworkConnectionUI` |
+| UDP 송수신 | `[Sent]`, `[Sent replay]`, `[Updated]`, `[Send error]`, `[Receive error]` | `Program.cs` |
+| UDP 무시 | `[Ignored] Empty message.`, `Invalid JSON.`, `Invalid message fields.`, `Unexpected sender endpoint.`, `[Ignored stale/duplicate]` | `Program.cs` |
+| UDP 집계 | `stats`, `bench`·`benchstop` 결과 | `Program.cs` |
+
+로그에 시각이 붙지 않으므로, 운영 환경이라면 시각·세션 ID를 함께 기록하고 파일로 남기는 것이 다음 단계다.
+
+# 7. 기술 선택, 자료 출처, 작성 구분
+
+## 기술과 통신 방식 선택
+
+| 선택 | 이유 |
+|---|---|
+| NGO 2.13.3 + Unity Transport | 수업 지정 환경. 서버 권한 구조(NetworkVariable 쓰기 권한, `SendTo.Server` RPC)를 바로 쓸 수 있다 |
+| 코인 획득을 클라이언트 요청 + 서버 판정으로 분리 | 클라이언트가 점수·코인 제거를 확정하지 못하게 하고, 잘못된 요청 거절을 한곳(`TryCollectCoin`)에서 처리하기 위해 |
+| 별도 `CoinId` | `NetworkObjectId`는 재사용될 수 있어 "이미 획득한 코인" 판정에 쓸 수 없다 |
+| UDP 메시지를 JSON으로 직렬화 | 콘솔 로그에서 바로 읽을 수 있고, .NET 기본 `System.Text.Json`만으로 처리된다. 대신 바이너리보다 크다 |
+| UDP 수신을 `ReceiveAsync` 비동기 작업으로 분리 | 콘솔 입력을 기다리는 동안에도 수신이 막히지 않게 하기 위해 |
+
+## 작성 구분
+
+- 저장소 커밋 `c303527`~`ab08376` (2026-10-19~20): 최초 구현. 코인 게임의 접속 UI, 플레이어 이동, 코인 생성, 점수, UDP 피어 프로그램.
+- 커밋 `bc86c9e` 이후 (2026-10-22~): Claude Code(AI)의 도움을 받아 추가·수정했다. 주요 내용은 다음과 같다.
+  - 제출 구성 정리 (`UdpPeer.csproj`, `Evidence/`, `TEST_REPORT.md`)
+  - 코인 획득 요청과 서버 검증 (`NetworkCoinCollector`, `NetworkCoinSpawner.TryCollectCoin`, `CoinId`), 시험용 입력 F1~F4, 접촉 자동 요청
+  - 이동 입력 방식 변경, 입력 설정, Run In Background
+  - UDP 시험 스크립트(`Evidence/UDP/udp_test_driver.py`)와 시험 실행
+
+# 8. 남은 검증과 개선
 
 ## CoinGame
 
-- 잘못된 코인 ID 요청에 대한 서버 검증 테스트
-- 허용 거리 밖에서의 코인 획득 요청 테스트
-- 중복 요청에 따른 점수 중복 증가 방지 확인
-- Host/Client 이동 및 상태 동기화 테스트
-- 재접속 시 개인 점수 초기화 확인
-- 연결 종료와 비정상 요청에 대한 예외 처리 검증
+- 반복 접속·해제 시 네트워크 오브젝트가 중복 생성되거나 남지 않는지 확인
+- 클라이언트가 이동 입력을 매 프레임 RPC로 보내므로, 입력이 바뀔 때만 보내도록 줄이는 조정과 전후 비교
 
 ## UdpPeerPosition
 
-- 잘못된 JSON 및 필드 값 테스트
-- 순서 번호가 뒤바뀐 메시지 테스트
-- 중복 메시지 처리 테스트
-- 더 다양한 전송량에서의 관측 결과 기록
-- 실제 LAN 환경에서의 추가 테스트
-- 수신 측 측정 구간과 송신 측 측정 구간을 구분한 성능 측정 개선
+- 주소·포트를 실행 인자나 입력으로 설정하는 기능 (현재 Peer ID에 따라 코드에 고정)
+- 실제 LAN 환경에서의 추가 시험
+- 수신 측 측정 구간을 명령 입력 시간과 분리한 성능 측정
 
-# 6. 결론
+# 9. 결론
 
 CoinGame은 서버 권한, 게임 규칙 검증, 플레이어 상태 및 점수 동기화에 중점을 둔다. UdpPeerPosition은 UDP 데이터그램 송수신, JSON 메시지 처리, 순서 번호 검증 및 전송량 측정에 중점을 둔다.
 

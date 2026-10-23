@@ -1,0 +1,151 @@
+[09:36:40.791] <입력> B
+[09:36:40.862] === UDP Peer Position ===
+[09:36:40.878] Peer ID (A or B):
+[09:36:40.878] My peer ID: B
+[09:36:40.878] Local port: 5001
+[09:36:40.878] Remote peer: A
+[09:36:40.878] Remote port: 5000
+[09:36:40.878] 
+[09:36:40.878] Commands:
+[09:36:40.878]   move X Y  - Change my position and send it
+[09:36:40.878]   show      - Show both positions
+[09:36:40.879]   send      - Send my current position with a new sequence
+[09:36:40.879]   replay N  - Resend the original message with sequence N
+[09:36:40.879]   bench N       - Send N position messages
+[09:36:40.879]   benchstart N  - Start receiving test measurement
+[09:36:40.879]   benchstop     - Stop measurement and show results
+[09:36:40.879]   stats         - Show cumulative counters
+[09:36:40.879]   quit      - Exit
+[09:36:40.879] 
+
+[09:36:42.905] ##### before: warm-up bench 1000 (excluded)
+[09:36:42.905] <입력> benchstart 1000
+[09:36:42.906] >
+[09:36:42.906] === Receiver Measurement Started ===
+[09:36:42.906] Expected messages: 1000
+[09:36:42.906] Run the sender's bench command now.
+[09:36:42.906] Use benchstop after the sender finishes.
+[09:36:44.733] <입력> benchstop
+[09:36:44.733] >
+[09:36:44.733] === Receiver Benchmark Result ===
+[09:36:44.733] Expected messages: 1000
+[09:36:44.733] Datagrams observed during window: 1000
+[09:36:44.733] Observed missing at stop: 0
+[09:36:44.734] Measurement window milliseconds: 1826.63
+[09:36:44.734] The missing count is an observation at stop time, not proof that every unobserved datagram was permanently lost.
+
+[09:36:45.248] ##### before: run 1 bench 10000
+[09:36:45.248] <입력> benchstart 10000
+[09:36:45.248] >
+[09:36:45.248] === Receiver Measurement Started ===
+[09:36:45.248] Expected messages: 10000
+[09:36:45.248] Run the sender's bench command now.
+[09:36:45.248] Use benchstop after the sender finishes.
+[09:36:47.560] <입력> benchstop
+[09:36:47.560] >
+[09:36:47.560] === Receiver Benchmark Result ===
+[09:36:47.560] Expected messages: 10000
+[09:36:47.560] Datagrams observed during window: 10000
+[09:36:47.560] Observed missing at stop: 0
+[09:36:47.560] Measurement window milliseconds: 2311.93
+[09:36:47.560] The missing count is an observation at stop time, not proof that every unobserved datagram was permanently lost.
+[09:36:48.072] <입력> show
+[09:36:48.072] >
+[09:36:48.072] My position (B): (0, 0)
+[09:36:48.072] Remote position (A): (9999, -9999), Sequence=11000
+[09:36:48.072] 
+
+[09:36:48.622] ##### before: run 2 bench 10000
+[09:36:48.622] <입력> benchstart 10000
+[09:36:48.622] >
+[09:36:48.622] === Receiver Measurement Started ===
+[09:36:48.622] Expected messages: 10000
+[09:36:48.622] Run the sender's bench command now.
+[09:36:48.622] Use benchstop after the sender finishes.
+[09:36:50.953] <입력> benchstop
+[09:36:50.953] >
+[09:36:50.953] === Receiver Benchmark Result ===
+[09:36:50.954] Expected messages: 10000
+[09:36:50.954] Datagrams observed during window: 9450
+[09:36:50.954] Observed missing at stop: 550
+[09:36:50.954] Measurement window milliseconds: 2331.46
+[09:36:50.954] The missing count is an observation at stop time, not proof that every unobserved datagram was permanently lost.
+[09:36:51.483] <입력> show
+[09:36:51.483] >
+[09:36:51.483] My position (B): (0, 0)
+[09:36:51.483] Remote position (A): (9999, -9999), Sequence=21000
+[09:36:51.483] 
+
+[09:36:51.984] ##### before: run 3 bench 10000
+[09:36:51.984] <입력> benchstart 10000
+[09:36:51.984] >
+[09:36:51.984] === Receiver Measurement Started ===
+[09:36:51.984] Expected messages: 10000
+[09:36:51.984] Run the sender's bench command now.
+[09:36:51.984] Use benchstop after the sender finishes.
+[09:36:54.311] <입력> benchstop
+[09:36:54.311] >
+[09:36:54.311] === Receiver Benchmark Result ===
+[09:36:54.311] Expected messages: 10000
+[09:36:54.312] Datagrams observed during window: 8134
+[09:36:54.312] Observed missing at stop: 1866
+[09:36:54.312] Measurement window milliseconds: 2327.55
+[09:36:54.312] The missing count is an observation at stop time, not proof that every unobserved datagram was permanently lost.
+[09:36:54.820] <입력> show
+[09:36:54.820] >
+[09:36:54.820] My position (B): (0, 0)
+[09:36:54.820] Remote position (A): (9999, -9999), Sequence=31000
+[09:36:54.820] 
+
+[09:36:55.338] ##### before: run 4 bench 10000
+[09:36:55.338] <입력> benchstart 10000
+[09:36:55.338] >
+[09:36:55.338] === Receiver Measurement Started ===
+[09:36:55.338] Expected messages: 10000
+[09:36:55.338] Run the sender's bench command now.
+[09:36:55.338] Use benchstop after the sender finishes.
+[09:36:57.720] <입력> benchstop
+[09:36:57.721] >
+[09:36:57.721] === Receiver Benchmark Result ===
+[09:36:57.721] Expected messages: 10000
+[09:36:57.721] Datagrams observed during window: 5936
+[09:36:57.721] Observed missing at stop: 4064
+[09:36:57.721] Measurement window milliseconds: 2383.33
+[09:36:57.721] The missing count is an observation at stop time, not proof that every unobserved datagram was permanently lost.
+[09:36:58.255] <입력> show
+[09:36:58.256] >
+[09:36:58.256] My position (B): (0, 0)
+[09:36:58.256] Remote position (A): (9999, -9999), Sequence=41000
+[09:36:58.256] 
+
+[09:36:58.767] ##### before: run 5 bench 10000
+[09:36:58.767] <입력> benchstart 10000
+[09:36:58.767] >
+[09:36:58.767] === Receiver Measurement Started ===
+[09:36:58.767] Expected messages: 10000
+[09:36:58.767] Run the sender's bench command now.
+[09:36:58.767] Use benchstop after the sender finishes.
+[09:37:01.114] <입력> benchstop
+[09:37:01.114] >
+[09:37:01.114] === Receiver Benchmark Result ===
+[09:37:01.114] Expected messages: 10000
+[09:37:01.114] Datagrams observed during window: 10000
+[09:37:01.114] Observed missing at stop: 0
+[09:37:01.114] Measurement window milliseconds: 2346.27
+[09:37:01.114] The missing count is an observation at stop time, not proof that every unobserved datagram was permanently lost.
+[09:37:01.668] <입력> show
+[09:37:01.669] >
+[09:37:01.669] My position (B): (0, 0)
+[09:37:01.669] Remote position (A): (9999, -9999), Sequence=51000
+[09:37:01.669] 
+[09:37:02.931] <입력> stats
+[09:37:02.931] >
+[09:37:02.931] === Cumulative Statistics ===
+[09:37:02.931] Send calls completed: 0
+[09:37:02.931] Send errors: 0
+[09:37:02.931] Received datagrams: 44520
+[09:37:02.931] Applied position messages: 44520
+[09:37:02.931] Invalid messages: 0
+[09:37:02.931] Stale/duplicate messages: 0
+[09:37:04.645] <입력> quit
+[09:37:04.680] > Peer stopped.

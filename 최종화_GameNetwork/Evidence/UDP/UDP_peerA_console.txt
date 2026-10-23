@@ -1,146 +1,153 @@
-[12:49:42.873] <입력> A   (Peer ID 입력)
-[12:49:42.944] === UDP Peer Position ===
-[12:49:42.961] Peer ID (A or B):
-[12:49:42.961] My peer ID: A
-[12:49:42.961] Local port: 5000
-[12:49:42.961] Remote peer: B
-[12:49:42.961] Remote port: 5001
-[12:49:42.961] 
-[12:49:42.961] Commands:
-[12:49:42.961]   move X Y  - Change my position and send it
-[12:49:42.961]   show      - Show both positions
-[12:49:42.961]   send      - Send my current position with a new sequence
-[12:49:42.961]   replay N  - Resend the original message with sequence N
-[12:49:42.961]   bench N       - Send N position messages
-[12:49:42.961]   benchstart N  - Start receiving test measurement
-[12:49:42.961]   benchstop     - Stop measurement and show results
-[12:49:42.962]   stats         - Show cumulative counters
-[12:49:42.962]   quit      - Exit
-[12:49:42.962] 
+[09:39:26.313] <입력> A   (Peer ID 입력)
+[09:39:26.409] === UDP Peer Position ===
+[09:39:26.438] Peer ID (A or B):
+[09:39:26.438] My peer ID: A
+[09:39:26.439] Local port: 5000
+[09:39:26.439] Remote peer: B
+[09:39:26.439] Remote port: 5001
+[09:39:26.439] 
+[09:39:26.439] Commands:
+[09:39:26.439]   move X Y  - Change my position and send it
+[09:39:26.439]   show      - Show both positions
+[09:39:26.439]   send      - Send my current position with a new sequence
+[09:39:26.439]   replay N  - Resend the original message with sequence N
+[09:39:26.439]   bench N       - Send N position messages
+[09:39:26.444]   benchstart N  - Start receiving test measurement
+[09:39:26.444]   benchstop     - Stop measurement and show results
+[09:39:26.444]   stats         - Show cumulative counters
+[09:39:26.444]   quit      - Exit
+[09:39:26.444] 
 
-[12:49:44.994] ##### 시험 1: 잘못된 메시지 수신 (B 포트 5001에 바인딩한 시험 송신기 사용, B는 아직 실행 전)
-[12:49:44.994] <입력> show   (상대 미수신 상태 확인)
-[12:49:44.994] >
-[12:49:44.994] My position (A): (0, 0)
-[12:49:44.994] Remote position (B): Not received yet
-[12:49:44.994] 
+[09:39:28.426] ##### 시험 1: 잘못된 메시지 수신 (B 포트 5001에 바인딩한 시험 송신기 사용, B는 아직 실행 전)
+[09:39:28.426] <입력> show   (상대 미수신 상태 확인)
+[09:39:28.426] >
+[09:39:28.426] My position (A): (0, 0)
+[09:39:28.426] Remote position (B): Not received yet
+[09:39:28.427] 
 
-[12:49:45.597] ##### 시험 송신기 -> A: 빈 데이터그램: b''
-[12:49:45.601] > [Ignored] Empty message.
+[09:39:29.055] ##### 시험 송신기 -> A: 빈 데이터그램: b''
+[09:39:29.109] > [Ignored] Empty message.
 
-[12:49:46.013] ##### 시험 송신기 -> A: 공백만 있는 메시지: b'   '
-[12:49:46.013] [Ignored] Empty message.
+[09:39:29.479] ##### 시험 송신기 -> A: 공백만 있는 메시지: b'   '
+[09:39:29.481] [Ignored] Empty message.
 
-[12:49:46.428] ##### 시험 송신기 -> A: JSON 형식 오류: b'{bad json'
-[12:49:46.462] [Ignored] Invalid JSON.
+[09:39:29.892] ##### 시험 송신기 -> A: JSON 형식 오류: b'{bad json'
+[09:39:29.981] [Ignored] Invalid JSON.
 
-[12:49:46.830] ##### 시험 송신기 -> A: null JSON: b'null'
-[12:49:46.830] [Ignored] Invalid message fields.
+[09:39:30.302] ##### 시험 송신기 -> A: null JSON: b'null'
+[09:39:30.304] [Ignored] Invalid message fields.
 
-[12:49:47.231] ##### 시험 송신기 -> A: X에 문자열 (해석 불가 값): b'{"PeerId":"B","Sequence":1,"X":"abc","Y":2}'
-[12:49:47.237] [Ignored] Invalid JSON.
+[09:39:30.709] ##### 시험 송신기 -> A: X에 문자열 (해석 불가 값): b'{"p":"B","s":1,"x":"abc","y":2}'
+[09:39:30.728] [Ignored] Invalid JSON.
 
-[12:49:47.633] ##### 시험 송신기 -> A: X가 int 범위 초과: b'{"PeerId":"B","Sequence":1,"X":99999999999,"Y":2}'
-[12:49:47.633] [Ignored] Invalid JSON.
+[09:39:31.116] ##### 시험 송신기 -> A: X가 int 범위 초과: b'{"p":"B","s":1,"x":99999999999,"y":2}'
+[09:39:31.117] [Ignored] Invalid JSON.
 
-[12:49:48.038] ##### 시험 송신기 -> A: 자기 자신(A)의 ID: b'{"PeerId":"A","Sequence":1,"X":1,"Y":1}'
-[12:49:48.040] [Ignored] Invalid message fields.
+[09:39:31.523] ##### 시험 송신기 -> A: 자기 자신(A)의 ID: b'{"p":"A","s":1,"x":1,"y":1}'
+[09:39:31.527] [Ignored] Invalid message fields.
 
-[12:49:48.444] ##### 시험 송신기 -> A: 알 수 없는 피어 ID: b'{"PeerId":"C","Sequence":1,"X":1,"Y":1}'
-[12:49:48.444] [Ignored] Invalid message fields.
+[09:39:31.925] ##### 시험 송신기 -> A: 알 수 없는 피어 ID: b'{"p":"C","s":1,"x":1,"y":1}'
+[09:39:31.926] [Ignored] Invalid message fields.
 
-[12:49:48.848] ##### 시험 송신기 -> A: 순서 번호 0: b'{"PeerId":"B","Sequence":0,"X":1,"Y":1}'
-[12:49:48.848] [Ignored] Invalid message fields.
+[09:39:32.339] ##### 시험 송신기 -> A: 순서 번호 0: b'{"p":"B","s":0,"x":1,"y":1}'
+[09:39:32.339] [Ignored] Invalid message fields.
 
-[12:49:49.254] ##### 시험 송신기 -> A: 음수 순서 번호: b'{"PeerId":"B","Sequence":-5,"X":1,"Y":1}'
-[12:49:49.254] [Ignored] Invalid message fields.
+[09:39:32.742] ##### 시험 송신기 -> A: 음수 순서 번호: b'{"p":"B","s":-5,"x":1,"y":1}'
+[09:39:32.744] [Ignored] Invalid message fields.
 
-[12:49:49.657] ##### 시험 송신기(포트 6000) -> A: 설정하지 않은 송신 주소: b'{"PeerId":"B","Sequence":1,"X":1,"Y":1}'
-[12:49:49.657] [Ignored] Unexpected sender endpoint.
-[12:49:50.169] <입력> show   (잘못된 메시지 후에도 미수신 상태 유지 확인)
-[12:49:50.169] 
-[12:49:50.169] My position (A): (0, 0)
-[12:49:50.169] Remote position (B): Not received yet
-[12:49:50.169] 
-[12:49:50.771] <입력> stats
-[12:49:50.771] >
-[12:49:50.771] === Cumulative Statistics ===
-[12:49:50.771] Send calls completed: 0
-[12:49:50.771] Send errors: 0
-[12:49:50.771] Received datagrams: 11
-[12:49:50.771] Applied position messages: 0
-[12:49:50.771] Invalid messages: 10
-[12:49:50.771] Stale/duplicate messages: 0
+[09:39:33.149] ##### 시험 송신기 -> A: 조정 전 형식(긴 필드 이름): b'{"PeerId":"B","Sequence":1,"X":1,"Y":1}'
+[09:39:33.150] [Ignored] Invalid message fields.
 
-[12:49:53.507] ##### 시험 2: 양쪽 위치 변경·전송과 상대 위치 표시
-[12:49:54.121] <입력> move 3 5
-[12:49:54.127] > [Sent] Seq=1, Data={"PeerId":"A","Sequence":1,"X":3,"Y":5}
-[12:49:54.733] >
-[12:49:54.733] [Updated] Peer=B, Seq=1, Position=(8, 2)
-[12:49:55.329] <입력> show
-[12:49:55.329] >
-[12:49:55.329] My position (A): (3, 5)
-[12:49:55.329] Remote position (B): (8, 2), Sequence=1
-[12:49:55.329] 
+[09:39:33.551] ##### 시험 송신기(포트 6000) -> A: 설정하지 않은 송신 주소: b'{"p":"B","s":1,"x":1,"y":1}'
+[09:39:33.553] [Ignored] Unexpected sender endpoint.
+[09:39:34.065] <입력> show   (잘못된 메시지 후에도 미수신 상태 유지 확인)
+[09:39:34.065] 
+[09:39:34.065] My position (A): (0, 0)
+[09:39:34.065] Remote position (B): Not received yet
+[09:39:34.065] 
+[09:39:34.675] <입력> stats
+[09:39:34.675] >
+[09:39:34.675] === Cumulative Statistics ===
+[09:39:34.675] Send calls completed: 0
+[09:39:34.675] Send errors: 0
+[09:39:34.675] Received datagrams: 12
+[09:39:34.675] Applied position messages: 0
+[09:39:34.675] Invalid messages: 11
+[09:39:34.675] Stale/duplicate messages: 0
 
-[12:49:56.548] ##### 시험 3: 오래된 순서 번호·중복 순서 번호 무시 (A가 replay로 당시 메시지를 그대로 재전송)
-[12:49:56.548] <입력> move 4 6
-[12:49:56.548] > [Sent] Seq=2, Data={"PeerId":"A","Sequence":2,"X":4,"Y":6}
-[12:49:57.154] <입력> move 7 7
-[12:49:57.154] > [Sent] Seq=3, Data={"PeerId":"A","Sequence":3,"X":7,"Y":7}
-[12:49:58.367] <입력> replay 2   (오래된 번호: Seq=2 (4, 6))
-[12:49:58.368] > [Sent replay] Seq=2, Data={"PeerId":"A","Sequence":2,"X":4,"Y":6}
-[12:49:58.975] <입력> replay 1   (오래된 번호: Seq=1 (3, 5))
-[12:49:58.975] > [Sent replay] Seq=1, Data={"PeerId":"A","Sequence":1,"X":3,"Y":5}
-[12:49:59.578] <입력> replay 3   (중복 번호: Seq=3 (7, 7))
-[12:49:59.578] > [Sent replay] Seq=3, Data={"PeerId":"A","Sequence":3,"X":7,"Y":7}
-[12:50:00.789] <입력> move 3 5   (이전과 같은 좌표라도 새 메시지는 Seq=4)
-[12:50:00.789] > [Sent] Seq=4, Data={"PeerId":"A","Sequence":4,"X":3,"Y":5}
+[09:39:37.416] ##### 시험 2: 양쪽 위치 변경·전송과 상대 위치 표시
+[09:39:38.028] <입력> move 3 5
+[09:39:38.035] > [Sent] Seq=1, Data={"p":"A","s":1,"x":3,"y":5}
+[09:39:38.647] >
+[09:39:38.647] [Updated] Peer=B, Seq=1, Position=(8, 2)
+[09:39:39.248] <입력> show
+[09:39:39.248] >
+[09:39:39.248] My position (A): (3, 5)
+[09:39:39.248] Remote position (B): (8, 2), Sequence=1
+[09:39:39.248] 
 
-[12:50:01.991] ##### 시험 4: 전송량 조건 비교
-[12:50:02.300] <입력> bench 100
-[12:50:02.302] >
-[12:50:02.302] === Sender Benchmark Result ===
-[12:50:02.302] Requested messages: 100
-[12:50:02.302] Send calls completed: 100
-[12:50:02.302] Send errors: 0
-[12:50:02.302] Elapsed milliseconds: 1.53
-[12:50:02.302] Wait for the receiver to finish measuring.
-[12:50:05.744] <입력> bench 10000
-[12:50:05.852] >
-[12:50:05.852] === Sender Benchmark Result ===
-[12:50:05.852] Requested messages: 10000
-[12:50:05.852] Send calls completed: 10000
-[12:50:05.852] Send errors: 0
-[12:50:05.852] Elapsed milliseconds: 107.62
-[12:50:05.852] Wait for the receiver to finish measuring.
-[12:50:08.870] <입력> benchstart 10000
-[12:50:08.870] >
-[12:50:08.870] === Receiver Measurement Started ===
-[12:50:08.870] Expected messages: 10000
-[12:50:08.870] Run the sender's bench command now.
-[12:50:08.870] Use benchstop after the sender finishes.
-[12:50:11.197] <입력> benchstop
-[12:50:11.198] >
-[12:50:11.198] === Receiver Benchmark Result ===
-[12:50:11.198] Expected messages: 10000
-[12:50:11.198] Datagrams observed during window: 10000
-[12:50:11.198] Observed missing at stop: 0
-[12:50:11.198] Measurement window milliseconds: 2327.75
-[12:50:11.198] The missing count is an observation at stop time, not proof that every unobserved datagram was permanently lost.
-[12:50:11.708] <입력> show
-[12:50:11.708] >
-[12:50:11.708] My position (A): (3, 5)
-[12:50:11.708] Remote position (B): (9999, -9999), Sequence=10001
-[12:50:11.708] 
-[12:50:12.918] <입력> stats
-[12:50:12.918] >
-[12:50:12.918] === Cumulative Statistics ===
-[12:50:12.918] Send calls completed: 10107
-[12:50:12.918] Send errors: 0
-[12:50:12.918] Received datagrams: 10012
-[12:50:12.918] Applied position messages: 10001
-[12:50:12.918] Invalid messages: 10
-[12:50:12.918] Stale/duplicate messages: 0
-[12:50:14.126] <입력> quit
-[12:50:14.130] > Peer stopped.
+[09:39:40.471] ##### 시험 3: 오래된 순서 번호·중복 순서 번호 무시 (A가 replay로 당시 메시지를 그대로 재전송)
+[09:39:40.471] <입력> move 4 6
+[09:39:40.471] > [Sent] Seq=2, Data={"p":"A","s":2,"x":4,"y":6}
+[09:39:41.078] <입력> move 7 7
+[09:39:41.078] > [Sent] Seq=3, Data={"p":"A","s":3,"x":7,"y":7}
+[09:39:42.299] <입력> replay 2   (오래된 번호: Seq=2 (4, 6))
+[09:39:42.300] > [Sent replay] Seq=2, Data={"p":"A","s":2,"x":4,"y":6}
+[09:39:42.906] <입력> replay 1   (오래된 번호: Seq=1 (3, 5))
+[09:39:42.907] > [Sent replay] Seq=1, Data={"p":"A","s":1,"x":3,"y":5}
+[09:39:43.517] <입력> replay 3   (중복 번호: Seq=3 (7, 7))
+[09:39:43.518] > [Sent replay] Seq=3, Data={"p":"A","s":3,"x":7,"y":7}
+[09:39:44.728] <입력> move 3 5   (이전과 같은 좌표라도 새 메시지는 Seq=4)
+[09:39:44.728] > [Sent] Seq=4, Data={"p":"A","s":4,"x":3,"y":5}
+
+[09:39:45.948] ##### 시험 4: 전송량 조건 비교
+[09:39:46.261] <입력> bench 100
+[09:39:46.266] >
+[09:39:46.266] === Sender Benchmark Result ===
+[09:39:46.266] Requested messages: 100
+[09:39:46.266] Send calls completed: 100
+[09:39:46.266] Send errors: 0
+[09:39:46.266] Elapsed milliseconds: 2.69
+[09:39:46.266] Payload bytes sent: 3079
+[09:39:46.266] Average payload bytes per message: 30.79
+[09:39:46.266] Wait for the receiver to finish measuring.
+[09:39:49.708] <입력> bench 10000
+[09:39:49.860] >
+[09:39:49.860] === Sender Benchmark Result ===
+[09:39:49.860] Requested messages: 10000
+[09:39:49.860] Send calls completed: 10000
+[09:39:49.860] Send errors: 0
+[09:39:49.860] Elapsed milliseconds: 152.04
+[09:39:49.860] Payload bytes sent: 366989
+[09:39:49.860] Average payload bytes per message: 36.70
+[09:39:49.860] Wait for the receiver to finish measuring.
+[09:39:52.834] <입력> benchstart 10000
+[09:39:52.835] >
+[09:39:52.835] === Receiver Measurement Started ===
+[09:39:52.835] Expected messages: 10000
+[09:39:52.835] Run the sender's bench command now.
+[09:39:52.835] Use benchstop after the sender finishes.
+[09:39:55.150] <입력> benchstop
+[09:39:55.150] >
+[09:39:55.150] === Receiver Benchmark Result ===
+[09:39:55.150] Expected messages: 10000
+[09:39:55.150] Datagrams observed during window: 10000
+[09:39:55.150] Observed missing at stop: 0
+[09:39:55.150] Measurement window milliseconds: 2315.88
+[09:39:55.151] The missing count is an observation at stop time, not proof that every unobserved datagram was permanently lost.
+[09:39:55.658] <입력> show
+[09:39:55.658] >
+[09:39:55.658] My position (A): (3, 5)
+[09:39:55.658] Remote position (B): (9999, -9999), Sequence=10001
+[09:39:55.658] 
+[09:39:56.868] <입력> stats
+[09:39:56.869] >
+[09:39:56.869] === Cumulative Statistics ===
+[09:39:56.869] Send calls completed: 10107
+[09:39:56.869] Send errors: 0
+[09:39:56.869] Received datagrams: 10013
+[09:39:56.869] Applied position messages: 10001
+[09:39:56.869] Invalid messages: 11
+[09:39:56.869] Stale/duplicate messages: 0
+[09:39:58.077] <입력> quit
+[09:39:58.079] > Peer stopped.
